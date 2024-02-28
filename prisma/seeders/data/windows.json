@@ -1,0 +1,51 @@
+[
+  {
+    "id": "4aed9c73-3357-4ad8-9d10-7cea4cf3c284",
+    "name": "Windows XP",
+    "releaseDate": "2001-10-25T00:00:00.000Z",
+    "version": "NT 5.1",
+    "buildNumber": 2600
+  },
+  {
+    "id": "f91ada10-874b-4934-a2d6-ed4c42b85e6c",
+    "name": "Windows Vista",
+    "releaseDate": "2007-01-30T00:00:00.000Z",
+    "version": "NT 6.0",
+    "buildNumber": 6002
+  },
+  {
+    "id": "68d6d679-9d56-4509-8a18-32e0ee872e60",
+    "name": "Windows 7",
+    "releaseDate": "2009-10-22T00:00:00.000Z",
+    "version": "NT 6.1",
+    "buildNumber": 7601
+  },
+  {
+    "id": "35fe2d63-ae23-4079-96e9-4d07b3334eb5",
+    "name": "Windows 8",
+    "releaseDate": "2012-10-26T00:00:00.000Z",
+    "version": "NT 6.2",
+    "buildNumber": 9200
+  },
+  {
+    "id": "66c4513e-7402-4013-94cf-48f6fee0d872",
+    "name": "Windows 8.1",
+    "releaseDate": "2013-10-17T00:00:00.000Z",
+    "version": "NT 6.3",
+    "buildNumber": 9600
+  },
+  {
+    "id": "772cc299-355e-4cf4-bc35-1eeb72cc7b06",
+    "name": "Windows 10 version 1507",
+    "releaseDate": "2015-07-29T00:00:00.000Z",
+    "version": "NT 10.0",
+    "buildNumber": 10240
+  },
+  {
+    "id": "4e7228b6-710d-4f90-90e1-0c0369931457",
+    "name": "Windows 11 version 21H2",
+    "releaseDate": "2021-10-05T00:00:00.000Z",
+    "version": "23H2",
+    "buildNumber": 22000
+  }
+]

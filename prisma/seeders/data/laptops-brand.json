@@ -1,0 +1,12 @@
+[
+  { "id": "e9465181-2164-4656-9396-ccad6da59374", "name": "Lenovo" },
+  { "id": "600165eb-1243-4067-ac75-c492b30373b0", "name": "ASUS" },
+  { "id": "6f355aa8-72e9-450c-8f35-86ddef7fc75f", "name": "Dell" },
+  { "id": "cbaed9fe-9424-4088-84ec-b17fd2e305b7", "name": "HP" },
+  { "id": "4fccbdc1-092b-47ea-97ba-14e8b2f27133", "name": "Acer" },
+  { "id": "157ed84b-37fb-4c4f-a00d-d67614aad1c8", "name": "Alienware" },
+  { "id": "7e454a00-5846-4286-93e3-4049b4b49a5e", "name": "MSI" },
+  { "id": "f7da5cb4-bde3-4fbb-92b3-9c4f9c6df551", "name": "AORUS" },
+  { "id": "c7ebc2b9-b96a-4274-a8e9-6a7a15756852", "name": "Razer" },
+  { "id": "b1d369f6-07fa-498b-bd4a-11d8e5e573ea", "name": "Microsoft" }
+]

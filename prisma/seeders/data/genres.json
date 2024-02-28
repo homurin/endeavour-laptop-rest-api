@@ -1,0 +1,18 @@
+[
+  { "id": "6d67d40e-7cf1-4012-a1e9-2956e217c3ec", "name": "Action" },
+  { "id": "d3b16456-18c7-4639-86ae-fb208138586e", "name": "Free to Play" },
+  { "id": "ed85658e-5c75-42f2-bc53-c1b6baeb471d", "name": "Indie" },
+  { "id": "fe50a3f7-fe4c-4998-ab45-ab23c07ee99b", "name": "Strategy" },
+  { "id": "e7d2f809-876c-4080-a6e1-cad607c9f456", "name": "Adventure" },
+  { "id": "50969147-fc85-4a9a-a574-ee50cde3f2bb", "name": "RPG" },
+  { "id": "75705e8f-1a23-4685-8519-019ec4340f4b", "name": "Massively Multiplayer" },
+  { "id": "49a35766-4602-45e1-abfd-edbddb3963d5", "name": "Gore" },
+  { "id": "cec1357d-ec5a-4446-b86c-34c5d0112236", "name": "Simulation" },
+  { "id": "12a6764c-39d2-43cd-8f19-dcd43b32f34a", "name": "Racing" },
+  { "id": "69bcc9eb-6ecc-4b2f-81d1-ae55b925785f", "name": "Casual" },
+  { "id": "07e20f52-8ee0-4416-ba89-36dc51578dae", "name": "Early Access" },
+  { "id": "3908bb70-0572-4b1d-a0a5-4b1278ed2361", "name": "Sports" },
+  { "id": "7321dfca-93ed-421c-90c2-f880f2185424", "name": "Violent" },
+  { "id": "0f02a5c9-c7a4-4917-83da-3acacf5e5d16", "name": "Animation & Modeling" },
+  { "id": "0fa32bc9-7a11-4879-9009-f493118b07bc", "name": "Video Production" }
+]

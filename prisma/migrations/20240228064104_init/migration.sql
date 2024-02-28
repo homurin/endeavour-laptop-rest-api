@@ -1,0 +1,7 @@
+-- AlterTable
+ALTER TABLE "Application" ALTER COLUMN "price" SET DEFAULT 0,
+ALTER COLUMN "description" DROP NOT NULL,
+ALTER COLUMN "website" DROP NOT NULL,
+ALTER COLUMN "developers" DROP NOT NULL,
+ALTER COLUMN "publishers" DROP NOT NULL,
+ALTER COLUMN "screenshots" DROP NOT NULL;

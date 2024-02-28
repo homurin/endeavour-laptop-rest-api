@@ -1,0 +1,196 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PanelType {
+  CRT
+  LCD
+  LED
+  TN
+  IPS
+  VA
+  OLED
+  AMOLED
+}
+
+enum LaptopSuit {
+  GAMING
+  DESIGN
+  PRODUCTIVITY
+}
+
+model Brand {
+  id        String   @id @unique @db.VarChar(36)
+  name      String   @db.VarChar(50)
+  laptops   Laptop[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Gpu {
+  id          String   @id @unique @db.VarChar(36)
+  name        String   @db.VarChar(50)
+  url         String   @db.VarChar(255)
+  benchmark   Int
+  price       Decimal  @db.Money
+  cores       Int
+  directX     Float
+  openGl      Float
+  baseSpeed   Int
+  maxSpeed    Int
+  memory      Int      @db.SmallInt
+  memorySpeed Int
+  laptops     Laptop[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Cpu {
+  id        String   @id @unique @db.VarChar(36)
+  name      String   @db.VarChar(50)
+  url       String   @db.VarChar(255)
+  price     Decimal  @db.Money
+  benchmark Int
+  baseSpeed Float    @db.DoublePrecision
+  maxSpeed  Float    @db.DoublePrecision
+  cores     Int
+  threads   Int
+  laptops   Laptop[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Windows {
+  id          String        @id @unique @db.VarChar(36)
+  name        String        @db.VarChar(50)
+  releaseDate DateTime
+  version     String        @db.VarChar(10)
+  buildNumber Int
+  laptops     Laptop[]
+  windows     Application[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Gallery {
+  id        String   @id @unique @db.VarChar(36)
+  laptopId  String   @db.VarChar(36)
+  image     String   @db.VarChar(255)
+  laptops   Laptop   @relation(fields: [laptopId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Laptop {
+  id                String     @id @unique @db.VarChar(36)
+  brandId           String?    @db.VarChar(36)
+  cpuId             String?    @db.VarChar(36)
+  gpuId             String?    @db.VarChar(36)
+  windowsId         String?    @db.VarChar(36)
+  name              String     @db.VarChar(255)
+  brand             Brand?     @relation(fields: [brandId], references: [id])
+  cpu               Cpu?       @relation(fields: [cpuId], references: [id])
+  gpu               Gpu?       @relation(fields: [gpuId], references: [id])
+  windowsVersion    Windows?   @relation(fields: [windowsId], references: [id])
+  url               String?    @db.VarChar(255)
+  buyUrl            String?    @db.VarChar(255)
+  thumb             String?    @db.VarChar(255)
+  price             Decimal    @default(0) @db.Money
+  displaySize       Int?       @db.SmallInt()
+  displayResolution String?    @db.VarChar(50)
+  displayName       String?    @db.VarChar(50)
+  panelType         PanelType?
+  panelCode         Int?       @db.SmallInt
+  refreshRate       Int?       @db.SmallInt
+  ssdStrorage       Int        @db.SmallInt
+  hddStorage        Int        @db.SmallInt
+  ram               Int        @db.SmallInt
+  weight            Decimal?   @db.Decimal
+  suitableFor       LaptopSuit @default(PRODUCTIVITY)
+  isNew             Boolean    @default(true)
+  gamingScore       Int?       @db.SmallInt
+  workstationScore  Int?       @db.SmallInt
+  galleries         Gallery[]
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+}
+
+model Application {
+  id               String                     @id @unique @db.VarChar(36)
+  winId            String                     @db.VarChar(36)
+  name             String                     @db.VarChar(100)
+  price            Decimal                    @default(0) @db.Money()
+  description      String?                    @db.Text
+  website          String?                    @db.VarChar(255)
+  developers       String?                    @db.VarChar(255)
+  publishers       String?                    @db.VarChar(255)
+  screenshots      String?                    @db.Text
+  windows          Boolean                    @default(false)
+  mac              Boolean                    @default(false)
+  linux            Boolean                    @default(false)
+  releaseDate      DateTime
+  minCpuSpeed      Float
+  minCores         Float
+  minThreads       Float
+  minDirectX       Float
+  minOpenGl        Float
+  minGpuMemory     Float
+  minGpuBoostClock Float
+  minRam           Float
+  minStorage       Float
+  minOs            Windows                    @relation(fields: [winId], references: [id])
+  bitOs            Int                        @db.SmallInt
+  genres           GenresOnApplications[]
+  categories       CategoriesOnApplications[]
+  tags             TagsOnApplications[]
+}
+
+model Genre {
+  id           String                 @id @unique @db.VarChar(36)
+  name         String                 @db.VarChar(33)
+  applications GenresOnApplications[]
+}
+
+model GenresOnApplications {
+  appId       String      @db.VarChar(36)
+  genreId     String      @db.VarChar(36)
+  application Application @relation(fields: [appId], references: [id])
+  genre       Genre       @relation(fields: [genreId], references: [id])
+
+  @@id([appId, genreId])
+}
+
+model Category {
+  id           String                     @id @unique @db.VarChar(36)
+  name         String                     @unique @db.VarChar(33)
+  applications CategoriesOnApplications[]
+}
+
+model CategoriesOnApplications {
+  appId        String      @db.VarChar(36)
+  categoryId   String      @db.VarChar(36)
+  applications Application @relation(fields: [appId], references: [id])
+  category     Category    @relation(fields: [categoryId], references: [id])
+
+  @@id([appId, categoryId])
+}
+
+model Tag {
+  id           String               @id @db.VarChar(36)
+  name         String               @db.VarChar(33)
+  applications TagsOnApplications[]
+}
+
+model TagsOnApplications {
+  appId        String      @db.VarChar(36)
+  tagId        String      @db.VarChar(36)
+  applications Application @relation(fields: [appId], references: [id])
+  tags         Tag         @relation(fields: [tagId], references: [id])
+
+  @@id([appId, tagId])
+}
