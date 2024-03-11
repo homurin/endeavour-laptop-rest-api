@@ -1,3 +1,0 @@
--- AlterTable
-ALTER TABLE "Application" ALTER COLUMN "developers" SET DATA TYPE VARCHAR(100),
-ALTER COLUMN "publishers" SET DATA TYPE VARCHAR(100);

@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Laptop" ALTER COLUMN "isNew" DROP NOT NULL;

@@ -24,9 +24,36 @@ enum LaptopSuit {
   PRODUCTIVITY
 }
 
+enum WindowsEdition {
+  HOME
+  S
+  PRO
+}
+
+model Admin {
+  id          String        @id @unique @db.VarChar(36)
+  username    String        @db.VarChar(50)
+  fullName    String        @db.VarChar(60)
+  email       String        @unique
+  password    String        @db.VarChar(72)
+  laptops     Laptop[]
+  brands      Brand[]
+  cpus        Cpu[]
+  gpus        Gpu[]
+  windows     Windows[]
+  application Application[]
+  tags        Tag[]
+  genres      Genre[]
+  categories  Category[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
 model Brand {
   id        String   @id @unique @db.VarChar(36)
+  adminId   String   @db.VarChar(36)
   name      String   @db.VarChar(50)
+  admin     Admin    @relation(fields: [adminId], references: [id])
   laptops   Laptop[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -34,6 +61,7 @@ model Brand {
 
 model Gpu {
   id          String   @id @unique @db.VarChar(36)
+  adminId     String   @db.VarChar(36)
   name        String   @db.VarChar(50)
   url         String   @db.VarChar(255)
   benchmark   Int
@@ -43,8 +71,9 @@ model Gpu {
   openGl      Float
   baseSpeed   Int
   maxSpeed    Int
-  memory      Int      @db.SmallInt
-  memorySpeed Int
+  memory      Float
+  memorySpeed Float
+  admin       Admin    @relation(fields: [adminId], references: [id])
   laptops     Laptop[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -52,6 +81,7 @@ model Gpu {
 
 model Cpu {
   id        String   @id @unique @db.VarChar(36)
+  adminId   String   @db.VarChar(36)
   name      String   @db.VarChar(50)
   url       String   @db.VarChar(255)
   price     Decimal  @db.Money
@@ -60,6 +90,7 @@ model Cpu {
   maxSpeed  Float    @db.DoublePrecision
   cores     Int
   threads   Int
+  admin     Admin    @relation(fields: [adminId], references: [id])
   laptops   Laptop[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -67,10 +98,12 @@ model Cpu {
 
 model Windows {
   id          String        @id @unique @db.VarChar(36)
+  adminId     String
   name        String        @db.VarChar(50)
   releaseDate DateTime
   version     String        @db.VarChar(10)
   buildNumber Int
+  admin       Admin         @relation(fields: [adminId], references: [id])
   laptops     Laptop[]
   windows     Application[]
   createdAt   DateTime      @default(now())
@@ -87,49 +120,60 @@ model Gallery {
 }
 
 model Laptop {
-  id                String     @id @unique @db.VarChar(36)
-  brandId           String?    @db.VarChar(36)
-  cpuId             String?    @db.VarChar(36)
-  gpuId             String?    @db.VarChar(36)
-  windowsId         String?    @db.VarChar(36)
-  name              String     @db.VarChar(255)
-  brand             Brand?     @relation(fields: [brandId], references: [id])
-  cpu               Cpu?       @relation(fields: [cpuId], references: [id])
-  gpu               Gpu?       @relation(fields: [gpuId], references: [id])
-  windowsVersion    Windows?   @relation(fields: [windowsId], references: [id])
-  url               String?    @db.VarChar(255)
-  buyUrl            String?    @db.VarChar(255)
-  thumb             String?    @db.VarChar(255)
-  price             Decimal    @default(0) @db.Money
-  displaySize       Int?       @db.SmallInt()
-  displayResolution String?    @db.VarChar(50)
-  displayName       String?    @db.VarChar(50)
+  id                String          @id @unique @db.VarChar(36)
+  adminId           String          @db.VarChar(36)
+  cpuId             String?         @db.VarChar(36)
+  gpuId             String?         @db.VarChar(36)
+  winId             String?         @db.VarChar(36)
+  brandId           String?         @db.VarChar(36)
+  thumbId           String?         @db.VarChar(36)
+  videosId          String?         @db.VarChar(36)
+  admin             Admin           @relation(fields: [adminId], references: [id])
+  cpu               Cpu?            @relation(fields: [cpuId], references: [id])
+  gpu               Gpu?            @relation(fields: [gpuId], references: [id])
+  brand             Brand?          @relation(fields: [brandId], references: [id])
+  windowsVersion    Windows?        @relation(fields: [winId], references: [id])
+  name              String          @db.VarChar(255)
+  ram               Float
+  ssdStorage        Float
+  hddStorage        Float
+  price             Decimal         @default(0) @db.Money
+  displayName       String?         @db.VarChar(50)
+  displaySize       Int?            @db.SmallInt()
+  displayResolution String?         @db.VarChar(50)
   panelType         PanelType?
-  panelCode         Int?       @db.SmallInt
-  refreshRate       Int?       @db.SmallInt
-  ssdStrorage       Int        @db.SmallInt
-  hddStorage        Int        @db.SmallInt
-  ram               Int        @db.SmallInt
-  weight            Decimal?   @db.Decimal
-  suitableFor       LaptopSuit @default(PRODUCTIVITY)
-  isNew             Boolean    @default(true)
-  gamingScore       Int?       @db.SmallInt
-  workstationScore  Int?       @db.SmallInt
+  panelCode         Int?            @db.SmallInt
+  refreshRate       Int?            @db.SmallInt
+  weight            Decimal?        @db.Decimal
+  suitableFor       LaptopSuit?     @default(PRODUCTIVITY)
+  isNew             Boolean?        @default(true)
+  gamingScore       Float?          @default(0.0)
+  workstationScore  Float?          @default(0.0)
+  osEdition         WindowsEdition? @default(HOME)
+  thumb             String?         @db.VarChar(255)
+  videos            String?         @db.VarChar(255)
   galleries         Gallery[]
-  createdAt         DateTime   @default(now())
-  updatedAt         DateTime   @updatedAt
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
 }
 
 model Application {
   id               String                     @id @unique @db.VarChar(36)
+  adminId          String                     @db.VarChar(36)
   winId            String                     @db.VarChar(36)
+  headerImageId    String?                    @db.VarChar(36)
+  screenshotsId    String?                    @db.VarChar(36)
+  moviesId         String?                    @db.VarChar(36)
   name             String                     @db.VarChar(100)
   price            Decimal                    @default(0) @db.Money()
   description      String?                    @db.Text
   website          String?                    @db.VarChar(255)
+  link             String?                    @db.VarChar(255)
   developers       String?                    @db.VarChar(255)
   publishers       String?                    @db.VarChar(255)
+  headerImage      String?                    @db.Text
   screenshots      String?                    @db.Text
+  movies           String?                    @db.Text
   windows          Boolean                    @default(false)
   mac              Boolean                    @default(false)
   linux            Boolean                    @default(false)
@@ -145,6 +189,7 @@ model Application {
   minStorage       Float
   minOs            Windows                    @relation(fields: [winId], references: [id])
   bitOs            Int                        @db.SmallInt
+  admin            Admin                      @relation(fields: [adminId], references: [id])
   genres           GenresOnApplications[]
   categories       CategoriesOnApplications[]
   tags             TagsOnApplications[]
@@ -152,6 +197,8 @@ model Application {
 
 model Genre {
   id           String                 @id @unique @db.VarChar(36)
+  adminId      String                 @db.VarChar(36)
+  admin        Admin                  @relation(fields: [adminId], references: [id])
   name         String                 @db.VarChar(33)
   applications GenresOnApplications[]
 }
@@ -167,7 +214,9 @@ model GenresOnApplications {
 
 model Category {
   id           String                     @id @unique @db.VarChar(36)
+  adminId      String                     @db.VarChar(36)
   name         String                     @unique @db.VarChar(33)
+  admin        Admin                      @relation(fields: [adminId], references: [id])
   applications CategoriesOnApplications[]
 }
 
@@ -181,7 +230,9 @@ model CategoriesOnApplications {
 }
 
 model Tag {
-  id           String               @id @db.VarChar(36)
+  id           String               @id @unique @db.VarChar(36)
+  adminId      String               @db.VarChar(36)
+  admin        Admin                @relation(fields: [adminId], references: [id])
   name         String               @db.VarChar(33)
   applications TagsOnApplications[]
 }

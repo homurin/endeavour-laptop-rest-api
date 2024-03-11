@@ -17,5 +17,3 @@ export default async function main() {
     throw new Error(err);
   }
 }
-
-// main();
