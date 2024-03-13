@@ -25,11 +25,23 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const laptops = __importStar(require("../controllers/laptopsController"));
-const multer_1 = require("../middelwares/multer");
+const multer_1 = require("../middlewares/multer");
+const multerValidation_1 = require("../middlewares/multerValidation");
+const imagekitUpload_1 = require("../middlewares/imagekitUpload");
+const laptopValidation_1 = require("../middlewares/laptopValidation");
 const router = (0, express_1.Router)();
 router.get("/", laptops.getAllLaptop);
-router.post("/", multer_1.upload.any(), laptops.createOneLaptop);
+router.post("/", multer_1.imagesVideos.fields([
+    { name: "thumb", maxCount: 1 },
+    { name: "videos", maxCount: 1 },
+    { name: "gallery" },
+]), multerValidation_1.laptopMulterValidation, imagekitUpload_1.uploadLaptopMedia, laptops.createOneLaptop);
 router.get("/:id", laptops.getOneLaptop);
-router.patch("/:id", laptops.updateOneLaptop);
+router.patch("/:id", laptopValidation_1.idCheck, multer_1.imagesVideos.fields([
+    { name: "thumb", maxCount: 1 },
+    { name: "videos", maxCount: 1 },
+    { name: "gallery" },
+]), multerValidation_1.laptopMulterValidation, imagekitUpload_1.uploadLaptopMedia, imagekitUpload_1.updateUploadLaptopMedia, laptops.updateOneLaptop);
+router.delete("/:id", laptopValidation_1.idCheck, laptops.deleteOneLaptop);
 exports.default = router;
 //# sourceMappingURL=laptopRouter.js.map

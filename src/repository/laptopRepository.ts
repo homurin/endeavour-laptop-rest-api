@@ -34,6 +34,14 @@ export async function getAll() {
   }
 }
 
+export async function getOneFullDesc(laptopId: string) {
+  const laptop = await prisma.laptop.findFirst({
+    where: { id: laptopId },
+    include: { galleries: true },
+  });
+  return laptop;
+}
+
 export async function getOne(laptopId: string) {
   try {
     const laptop = await prisma.laptop.findFirst({

@@ -1,10 +1,12 @@
 import * as Laptop from "@repository/laptopRepository";
-import { Gallery, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
+import {
+  GetAllLaptop,
+  GetOneLaptop,
+  UpdateOneLaptop,
+  CreateOneLaptop,
+} from "../types/laptop";
 import { v4 as uuid } from "uuid";
-
-type GetAllLaptop = Prisma.PromiseReturnType<typeof Laptop.getAll>;
-type GetOneLaptop = Prisma.PromiseReturnType<typeof Laptop.getOne>;
-type CreateOneLaptop = Prisma.PromiseReturnType<typeof Laptop.createOne>;
 
 export async function getAllLaptop(): Promise<GetAllLaptop> {
   try {
@@ -34,7 +36,6 @@ export async function createOneLaptop(
     const data: Prisma.LaptopUncheckedCreateInput = {
       ...laptop,
       id: uuid(),
-      adminId: "5d1bee8e-b995-41c5-9fed-e4e537e6a8ab",
       ram: Number(laptop.ram),
       hddStorage: Number(laptop.hddStorage),
       ssdStorage: Number(laptop.hddStorage),
@@ -62,29 +63,41 @@ export async function createOneLaptop(
 export async function updateOneLaptop(
   laptopId: string,
   laptop: Prisma.LaptopUncheckedUpdateInput,
-  galleries: Array<Gallery>
-) {
+  galleries?: Array<{ id?: string; image?: string }>
+): Promise<UpdateOneLaptop> {
   try {
-    const updatedGalleries: Array<Gallery> = galleries.map((gal) => {
-      return {
-        ...gal,
-        updatedAt: new Date(),
-      };
-    });
+    const gallery = galleries as Prisma.GalleryCreateManyLaptopsInput[];
     const data: Prisma.LaptopUncheckedUpdateInput = {
       ...laptop,
-      adminId: "5d1bee8e-b995-41c5-9fed-e4e537e6a8ab",
+      ram: Number(laptop.ram),
+      hddStorage: Number(laptop.hddStorage),
+      ssdStorage: Number(laptop.hddStorage),
+      displaySize: Number(laptop.displaySize),
+      price: Number(laptop.price),
+      weight: Number(laptop.weight),
+      panelCode: Number(laptop.panelCode),
+      refreshRate: Number(laptop.refreshRate),
+      workstationScore: Number(laptop.workstationScore),
+      gamingScore: Number(laptop.gamingScore),
+      isNew: Boolean(JSON.parse(String(laptop.isNew))),
       galleries: {
-        updateMany: {
-          data: updatedGalleries,
-          where: {
-            laptopId: laptopId,
-          },
+        createMany: {
+          data: gallery,
         },
       },
     };
-    const createdLaptop = await Laptop.updateOne(laptopId, data);
-    return createdLaptop;
+
+    const updatedLaptop = await Laptop.updateOne(laptopId, data);
+
+    return updatedLaptop;
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function deleteOneLaptop(laptopId: string): Promise<void> {
+  try {
+    await await Laptop.deleteOne(laptopId);
   } catch (err) {
     throw err;
   }

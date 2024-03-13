@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import { SendError } from "@utils/apiError";
 import * as laptopService from "@services/laptopService";
-import { Gallery, Prisma } from "@prisma/client";
-import { uploadImage, bulkUploadImage, uploadVideos } from "../libs/imagekit";
+import { Prisma } from "@prisma/client";
+import { RequestGallery } from "../types/laptop";
 
-async function getAllLaptop(
+export async function getAllLaptop(
   req: Request,
   res: Response,
   next: NextFunction
@@ -20,7 +20,7 @@ async function getAllLaptop(
   }
 }
 
-async function getOneLaptop(
+export async function getOneLaptop(
   req: Request,
   res: Response,
   next: NextFunction
@@ -43,43 +43,21 @@ async function getOneLaptop(
   }
 }
 
-async function createOneLaptop(
+export async function createOneLaptop(
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> {
   try {
+    let galleries: RequestGallery[] = [];
+
+    if (req.galleries) {
+      galleries = req.galleries;
+    }
+
     const laptop = req.body as Prisma.LaptopUncheckedCreateInput;
-
-    interface MulterFiles {
-      [fieldname: string]: Express.Multer.File[];
-    }
-
-    const files = req.files as MulterFiles;
-    const thumb = files?.["thumb"]?.[0];
-    const videos = files?.["videos"]?.[0];
-    const gallery = files?.["gallery"];
-
-    let galleries: Array<{ id?: string; image?: string }> = [];
-    if (thumb) {
-      const thumbData = await uploadImage(thumb);
-      laptop.thumbId = thumbData.fileId;
-      laptop.thumb = thumbData.url;
-    }
-
-    if (gallery) {
-      const galleryData = await bulkUploadImage(gallery);
-      galleries = galleryData.map((gal) => {
-        return {
-          id: gal.fileId,
-          image: gal.url,
-        };
-      });
-    }
-    if (videos) {
-      const videosData = await uploadVideos(videos);
-      laptop.videosId = videosData.fileId;
-      laptop.videos = videosData.url;
+    if (req.user) {
+      laptop.adminId = req.user.id;
     }
     const createdLaptop = await laptopService.createOneLaptop(
       laptop,
@@ -95,23 +73,33 @@ async function createOneLaptop(
   }
 }
 
-async function updateOneLaptop(
+export async function updateOneLaptop(
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> {
   try {
-    const laptopId: string = req.params.id;
-    const laptop: Prisma.LaptopUncheckedCreateInput = req.body;
-    const galleries: Array<Gallery> = req.body.galleries;
-    const createdLaptop = await laptopService.updateOneLaptop(
-      laptopId,
+    const id: string = req.params.id;
+
+    let galleries: RequestGallery[] = [];
+    const laptop = req.body as Prisma.LaptopUncheckedUpdateInput;
+
+    if (req.user) {
+      laptop.adminId = req.user.id;
+    }
+
+    if (req.galleries) {
+      galleries = req.galleries;
+    }
+
+    const updatedLaptop = await laptopService.updateOneLaptop(
+      id,
       laptop,
       galleries
     );
     res.status(201).json({
       message: "success",
-      laptop: createdLaptop,
+      laptop: updatedLaptop,
     });
   } catch (err) {
     console.info(err);
@@ -119,4 +107,18 @@ async function updateOneLaptop(
   }
 }
 
-export { getAllLaptop, getOneLaptop, createOneLaptop, updateOneLaptop };
+export async function deleteOneLaptop(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const id: string = req.params.id;
+    await laptopService.deleteOneLaptop(id);
+    res.status(200).json({
+      message: `record has been successfull deleted`,
+    });
+  } catch (err) {
+    next(new SendError("internal server error", 500));
+  }
+}

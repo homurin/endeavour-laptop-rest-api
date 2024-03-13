@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateOneLaptop = exports.createOneLaptop = exports.getOneLaptop = exports.getAllLaptop = void 0;
+exports.deleteOneLaptop = exports.updateOneLaptop = exports.createOneLaptop = exports.getOneLaptop = exports.getAllLaptop = void 0;
 const Laptop = __importStar(require("../repository/laptopRepository"));
 const uuid_1 = require("uuid");
 function getAllLaptop() {
@@ -62,8 +62,6 @@ exports.getOneLaptop = getOneLaptop;
 function createOneLaptop(laptop, galleries) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            // const laptopJson = JSON.parse(JSON.stringify(laptop));
-            // console.info(laptopJson);
             const gallery = galleries;
             const data = Object.assign(Object.assign({}, laptop), { id: (0, uuid_1.v4)(), adminId: "5d1bee8e-b995-41c5-9fed-e4e537e6a8ab", ram: Number(laptop.ram), hddStorage: Number(laptop.hddStorage), ssdStorage: Number(laptop.hddStorage), displaySize: Number(laptop.displaySize), price: Number(laptop.price), weight: Number(laptop.weight), panelCode: Number(laptop.panelCode), refreshRate: Number(laptop.refreshRate), workstationScore: Number(laptop.workstationScore), gamingScore: Number(laptop.gamingScore), isNew: Boolean(JSON.parse(String(laptop.isNew))), galleries: {
                     createMany: {
@@ -82,19 +80,14 @@ exports.createOneLaptop = createOneLaptop;
 function updateOneLaptop(laptopId, laptop, galleries) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const updatedGalleries = galleries.map((gal) => {
-                return Object.assign(Object.assign({}, gal), { updatedAt: new Date() });
-            });
-            const data = Object.assign(Object.assign({}, laptop), { adminId: "5d1bee8e-b995-41c5-9fed-e4e537e6a8ab", galleries: {
-                    updateMany: {
-                        data: updatedGalleries,
-                        where: {
-                            laptopId: laptopId,
-                        },
+            const gallery = galleries;
+            const data = Object.assign(Object.assign({}, laptop), { adminId: "5d1bee8e-b995-41c5-9fed-e4e537e6a8ab", ram: Number(laptop.ram), hddStorage: Number(laptop.hddStorage), ssdStorage: Number(laptop.hddStorage), displaySize: Number(laptop.displaySize), price: Number(laptop.price), weight: Number(laptop.weight), panelCode: Number(laptop.panelCode), refreshRate: Number(laptop.refreshRate), workstationScore: Number(laptop.workstationScore), gamingScore: Number(laptop.gamingScore), isNew: Boolean(JSON.parse(String(laptop.isNew))), galleries: {
+                    createMany: {
+                        data: gallery,
                     },
                 } });
-            const createdLaptop = yield Laptop.updateOne(laptopId, data);
-            return createdLaptop;
+            const updatedLaptop = yield Laptop.updateOne(laptopId, data);
+            return updatedLaptop;
         }
         catch (err) {
             throw err;
@@ -102,4 +95,15 @@ function updateOneLaptop(laptopId, laptop, galleries) {
     });
 }
 exports.updateOneLaptop = updateOneLaptop;
+function deleteOneLaptop(laptopId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            yield yield Laptop.deleteOne(laptopId);
+        }
+        catch (err) {
+            throw err;
+        }
+    });
+}
+exports.deleteOneLaptop = deleteOneLaptop;
 //# sourceMappingURL=laptopService.js.map

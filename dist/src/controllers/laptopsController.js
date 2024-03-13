@@ -32,10 +32,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateOneLaptop = exports.createOneLaptop = exports.getOneLaptop = exports.getAllLaptop = void 0;
+exports.deleteOneLaptop = exports.updateOneLaptop = exports.createOneLaptop = exports.getOneLaptop = exports.getAllLaptop = void 0;
 const apiError_1 = require("../utils/apiError");
 const laptopService = __importStar(require("../services/laptopService"));
-const imagekit_1 = require("../libs/imagekit");
 function getAllLaptop(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -76,36 +75,11 @@ exports.getOneLaptop = getOneLaptop;
 function createOneLaptop(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const laptop = req.body;
-            console.info(req.files);
-            const files = req.files;
-            console.info("=====================================");
-            const thumb = files["thumb"][0];
-            if (!thumb) {
-                laptop.thumb = "";
-                laptop.thumbId = "";
-            }
-            const videos = files["videos"][0];
             let galleries = [];
-            if (thumb) {
-                const thumbData = yield (0, imagekit_1.uploadImage)(thumb);
-                (laptop.thumbId = thumbData.fileId), (laptop.thumb = thumbData.url);
+            if (req.galleries) {
+                galleries = req.galleries;
             }
-            const gallery = files["gallery"];
-            if (gallery) {
-                const galleryData = yield (0, imagekit_1.bulkUploadImage)(gallery);
-                galleries = galleryData.map((gal) => {
-                    return {
-                        id: gal.fileId,
-                        image: gal.url,
-                    };
-                });
-            }
-            if (videos) {
-                const videosData = yield (0, imagekit_1.uploadVideos)(videos);
-                laptop.videosId = videosData.fileId;
-                laptop.videos = videosData.url;
-            }
+            const laptop = req.body;
             const createdLaptop = yield laptopService.createOneLaptop(laptop, galleries);
             res.status(201).json({
                 message: "success",
@@ -122,13 +96,16 @@ exports.createOneLaptop = createOneLaptop;
 function updateOneLaptop(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const laptopId = req.params.id;
+            const id = req.params.id;
+            let galleries = [];
             const laptop = req.body;
-            const galleries = req.body.galleries;
-            const createdLaptop = yield laptopService.updateOneLaptop(laptopId, laptop, galleries);
+            if (req.galleries) {
+                galleries = req.galleries;
+            }
+            const updatedLaptop = yield laptopService.updateOneLaptop(id, laptop, galleries);
             res.status(201).json({
                 message: "success",
-                laptop: createdLaptop,
+                laptop: updatedLaptop,
             });
         }
         catch (err) {
@@ -138,4 +115,19 @@ function updateOneLaptop(req, res, next) {
     });
 }
 exports.updateOneLaptop = updateOneLaptop;
+function deleteOneLaptop(req, res, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const id = req.params.id;
+            yield laptopService.deleteOneLaptop(id);
+            res.status(200).json({
+                message: `record has been successfull deleted`,
+            });
+        }
+        catch (err) {
+            next(new apiError_1.SendError("internal server error", 500));
+        }
+    });
+}
+exports.deleteOneLaptop = deleteOneLaptop;
 //# sourceMappingURL=laptopsController.js.map

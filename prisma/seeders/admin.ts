@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
+import { encryptPasswordSync } from "../../src/libs/bcrypt";
 import { v4 as uuid } from "uuid";
 import dotenv from "dotenv";
 import process from "process";
@@ -17,9 +17,9 @@ interface Admin {
 }
 
 const adminConfig = (): Admin => {
-  const saltRounds: number = Number(process.env.SALT_ROUNDS);
   const password: string = process.env.ADMIN_PASSWORD || "endeavours2024";
-  const hashedPassword = bcrypt.hashSync(password, saltRounds);
+  const hashedPassword = encryptPasswordSync(password);
+
   return {
     id: uuid(),
     username: "endeavours",

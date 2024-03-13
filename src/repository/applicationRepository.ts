@@ -2,7 +2,7 @@ import { PrismaClient, Prisma } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function getAllApplication() {
+export async function getAll() {
   const applications = await prisma.application.findMany({
     select: {
       id: true,
@@ -27,7 +27,7 @@ export async function getAllApplication() {
   return applications;
 }
 
-export async function getOneApplication(applicationId: string) {
+export async function getOne(applicationId: string) {
   try {
     const application = await prisma.application.findFirst({
       select: {
@@ -98,14 +98,10 @@ export async function getOneApplication(applicationId: string) {
   }
 }
 
-export async function createApplication(
-  data: Prisma.ApplicationUncheckedCreateInput
-) {
+export async function createOne(data: Prisma.ApplicationUncheckedCreateInput) {
   try {
     const application = await prisma.application.create({
-      data: {
-        ...data,
-      },
+      data,
     });
     return application;
   } catch (err) {
@@ -113,14 +109,14 @@ export async function createApplication(
   }
 }
 
-export async function updateApplication(
+export async function updateOne(
   applicationId: string,
-  data: Prisma.ApplicationUpdateInput
+  data: Prisma.ApplicationUncheckedUpdateInput
 ) {
   try {
     const application = await prisma.application.update({
       where: { id: applicationId },
-      data: data,
+      data,
     });
     console.info(application);
     return application;
@@ -129,9 +125,53 @@ export async function updateApplication(
   }
 }
 
-export async function deleteApplication(applicationId: string) {
+export async function deleteOne(appId: string) {
   try {
-    await prisma.application.delete({ where: { id: applicationId } });
+    await prisma.tagsOnApplications.deleteMany({
+      where: { appId },
+    });
+    await prisma.genresOnApplications.deleteMany({ where: { appId } });
+    await prisma.categoriesOnApplications.deleteMany({ where: { appId } });
+    await prisma.application.delete({ where: { id: appId } });
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function addGenres(
+  data: Array<{ appId: string; genreId: string }>
+) {
+  try {
+    const genres = await prisma.genresOnApplications.createMany({
+      data: data,
+      skipDuplicates: true,
+    });
+    return genres;
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function addCategories(
+  data: Array<{ appId: string; categoryId: string }>
+) {
+  try {
+    const categories = await prisma.categoriesOnApplications.createMany({
+      data: data,
+      skipDuplicates: true,
+    });
+    return categories;
+  } catch (err) {
+    throw err;
+  }
+}
+export async function addtags(data: Array<{ appId: string; tagId: string }>) {
+  try {
+    const genres = await prisma.tagsOnApplications.createMany({
+      data: data,
+      skipDuplicates: true,
+    });
+    return genres;
   } catch (err) {
     throw err;
   }

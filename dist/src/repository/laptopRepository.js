@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteOne = exports.updateOne = exports.createOne = exports.getOne = exports.getAll = void 0;
+exports.deleteOne = exports.updateOne = exports.createOne = exports.getOne = exports.getOneFullDesc = exports.getAll = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 function getAll() {
@@ -46,6 +46,16 @@ function getAll() {
     });
 }
 exports.getAll = getAll;
+function getOneFullDesc(laptopId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const laptop = yield prisma.laptop.findFirst({
+            where: { id: laptopId },
+            include: { galleries: true },
+        });
+        return laptop;
+    });
+}
+exports.getOneFullDesc = getOneFullDesc;
 function getOne(laptopId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {

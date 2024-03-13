@@ -11,6 +11,7 @@ export default async function main() {
     );
     const steamGames = JSON.parse(steamGamesBuffer.toString()).map(
       (app: any) => {
+        delete app.minThreads;
         return {
           id: app.id,
           adminId: admin.id,

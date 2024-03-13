@@ -161,11 +161,11 @@ model Application {
   id               String                     @id @unique @db.VarChar(36)
   adminId          String                     @db.VarChar(36)
   winId            String                     @db.VarChar(36)
+  name             String                     @db.VarChar(100)
   headerImageId    String?                    @db.VarChar(36)
   screenshotsId    String?                    @db.VarChar(36)
   moviesId         String?                    @db.VarChar(36)
-  name             String                     @db.VarChar(100)
-  price            Decimal                    @default(0) @db.Money()
+  price            Decimal?                    @default(0) @db.Money()
   description      String?                    @db.Text
   website          String?                    @db.VarChar(255)
   link             String?                    @db.VarChar(255)
@@ -180,7 +180,6 @@ model Application {
   releaseDate      DateTime
   minCpuSpeed      Float
   minCores         Float
-  minThreads       Float
   minDirectX       Float
   minOpenGl        Float
   minGpuMemory     Float
@@ -233,7 +232,7 @@ model Tag {
   id           String               @id @unique @db.VarChar(36)
   adminId      String               @db.VarChar(36)
   admin        Admin                @relation(fields: [adminId], references: [id])
-  name         String               @db.VarChar(33)
+  name         String               @db.VarChar(50)
   applications TagsOnApplications[]
 }
 
