@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from "express";
+import { JsonWebTokenError } from "jsonwebtoken";
 import { SendError } from "../utils/apiError";
 import { verifyToken } from "../libs/jwt";
-import { AdminProfile } from "../types/admin";
+import { AdminProfile } from "@models/admin";
 import { isAdminExists } from "../services/adminService";
-import { JsonWebTokenError } from "jsonwebtoken";
 
 export async function authMe(req: Request, res: Response, next: NextFunction) {
   try {
@@ -24,7 +24,6 @@ export async function authMe(req: Request, res: Response, next: NextFunction) {
     req.user = payload;
     next();
   } catch (err) {
-    console.info(err);
     const error = err as Error;
     if (error instanceof JsonWebTokenError) {
       next(new SendError(error.message, 400));

@@ -31,30 +31,6 @@ export async function getOnecpu(cpuId: string) {
         threads: true,
         benchmark: true,
         createdAt: true,
-        laptops: {
-          select: {
-            id: true,
-            name: true,
-            ram: true,
-            displayResolution: true,
-            panelType: true,
-            hddStorage: true,
-            ssdStorage: true,
-            price: true,
-            thumb: true,
-            cpu: {
-              select: {
-                name: true,
-                baseSpeed: true,
-              },
-            },
-            gpu: {
-              select: {
-                name: true,
-              },
-            },
-          },
-        },
       },
       where: {
         id: cpuId,
@@ -70,9 +46,7 @@ export async function getOnecpu(cpuId: string) {
 export async function createCpu(data: Prisma.CpuUncheckedCreateInput) {
   try {
     const cpu = await prisma.cpu.create({
-      data: {
-        ...data,
-      },
+      data,
     });
     return cpu;
   } catch (err) {
@@ -83,8 +57,8 @@ export async function createCpu(data: Prisma.CpuUncheckedCreateInput) {
 export async function updateCpu(cpuId: string, data: Prisma.CpuUpdateInput) {
   try {
     const cpu = await prisma.cpu.update({
-      where: { id: cpuId },
       data: data,
+      where: { id: cpuId },
     });
 
     return cpu;
@@ -95,6 +69,7 @@ export async function updateCpu(cpuId: string, data: Prisma.CpuUpdateInput) {
 
 export async function deleteCpu(cpuId: string) {
   try {
+    await prisma.laptop.deleteMany({ where: { cpuId } });
     await prisma.cpu.delete({ where: { id: cpuId } });
   } catch (err) {
     throw err;

@@ -11,20 +11,16 @@ const imagekit = new ImageKit({
   urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT || "",
 });
 
-export async function uploadImage(image: Express.Multer.File) {
-  const allowedMimetype = ["image/png", "image/jpg", "image/jpeg"];
-  const isAllowedImageMimetype = allowedMimetype.includes(image.mimetype);
-  if (!isAllowedImageMimetype) {
-    throw new MulterError("LIMIT_UNEXPECTED_FILE", image.fieldname);
-  }
-  if (maxMbFileSize(image.size, 5)) {
-    throw new MulterError("LIMIT_FILE_SIZE", image.fieldname);
-  }
+export async function uploadImage(
+  image: Express.Multer.File,
+  folderPath: string
+) {
   const filename = image.originalname;
   const extname = path.extname(filename);
   const uploadedImage = await imagekit.upload({
     file: image.buffer,
     fileName: `IMG-${Date.now()}.${extname}`,
+    folder: "endeavour-laptop/" + folderPath,
   });
   return {
     fileId: uploadedImage.fileId,
@@ -32,47 +28,36 @@ export async function uploadImage(image: Express.Multer.File) {
   };
 }
 
-export async function uploadVideos(videos: Express.Multer.File) {
-  const allowedMimetype = [
-    "video/3gp",
-    "video/mp4",
-    "video/MPEG-4",
-    "video/mkv",
-  ];
-  const isAllowedMimetype = allowedMimetype.includes(videos.mimetype);
-  if (maxMbFileSize(videos.size, 25)) {
-    throw new MulterError("LIMIT_FILE_SIZE", videos.fieldname);
-  }
+export async function uploadVideos(
+  videos: Express.Multer.File,
+  folderPath: string
+) {
   const filename = videos.originalname;
   const extname = path.extname(filename);
-  if (isAllowedMimetype) {
-    throw new MulterError("LIMIT_UNEXPECTED_FILE", videos.fieldname);
-  }
+
   const uploadedVideos = await imagekit.upload({
     file: videos.buffer,
     fileName: `MOV-${Date.now()}.${extname}`,
+    folder: "endeavour-laptop/" + folderPath,
   });
   return {
     fileId: uploadedVideos.fileId,
     url: uploadedVideos.url,
   };
 }
-export async function bulkUploadImage(images: Express.Multer.File[]) {
+export async function bulkUploadImage(
+  images: Express.Multer.File[],
+  folderPath: string
+) {
   const data = [];
-  const allowedMimetype = ["image/png", "image/jpg", "image/jpeg"];
+
   for (const image of images) {
-    const isAllowedImageMimetype = allowedMimetype.includes(image.mimetype);
-    if (!isAllowedImageMimetype) {
-      throw new MulterError("LIMIT_UNEXPECTED_FILE", image.fieldname);
-    }
-    if (maxMbFileSize(image.size, 5)) {
-      throw new MulterError("LIMIT_FILE_SIZE", image.fieldname);
-    }
     const filename = image.originalname;
     const extname = path.extname(filename);
     const uploadImage = await imagekit.upload({
       file: image.buffer,
       fileName: `IMG-${Date.now()}.${extname}`,
+      folder: "endeavour-laptop/" + folderPath,
     });
     data.push({
       fileId: uploadImage.fileId,
@@ -88,6 +73,49 @@ export async function deleteOneFiles(fileId: string) {
 
 export async function bulkDeleteFiles(fileId: string[]) {
   await imagekit.bulkDeleteFiles(fileId);
+}
+
+export async function isValidVideos(videos: Express.Multer.File) {
+  const allowedMimetype = [
+    "video/3gp",
+    "video/mp4",
+    "video/MPEG-4",
+    "video/mkv",
+  ];
+
+  const isAllowedMimetype = allowedMimetype.includes(videos.mimetype);
+  if (!isAllowedMimetype) {
+    throw new MulterError("LIMIT_UNEXPECTED_FILE", videos.fieldname);
+  }
+  if (maxMbFileSize(videos.size, 25)) {
+    throw new MulterError("LIMIT_FILE_SIZE", videos.fieldname);
+  }
+  return true;
+}
+export async function isValidImages(image: Express.Multer.File) {
+  const allowedMimetype = ["image/png", "image/jpg", "image/jpeg"];
+  const isAllowedImageMimetype = allowedMimetype.includes(image.mimetype);
+  if (!isAllowedImageMimetype) {
+    throw new MulterError("LIMIT_UNEXPECTED_FILE", image.fieldname);
+  }
+  if (maxMbFileSize(image.size, 5)) {
+    throw new MulterError("LIMIT_FILE_SIZE", image.fieldname);
+  }
+  return true;
+}
+
+export async function bulkIsValidImages(images: Express.Multer.File[]) {
+  const allowedMimetype = ["image/png", "image/jpg", "image/jpeg"];
+  for (const image of images) {
+    const isAllowedImageMimetype = allowedMimetype.includes(image.mimetype);
+    if (!isAllowedImageMimetype) {
+      throw new MulterError("LIMIT_UNEXPECTED_FILE", image.fieldname);
+    }
+    if (maxMbFileSize(image.size, 5)) {
+      throw new MulterError("LIMIT_FILE_SIZE", image.fieldname);
+    }
+  }
+  return true;
 }
 
 function maxMbFileSize(fileSize: number, maxMbSize: number): boolean {

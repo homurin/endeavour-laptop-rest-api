@@ -18,6 +18,7 @@ function main() {
         try {
             const steamGamesBuffer = yield (0, promises_1.readFile)(__dirname + "/data/steam-games.json");
             const steamGames = JSON.parse(steamGamesBuffer.toString()).map((app) => {
+                delete app.minThreads;
                 return Object.assign({ id: app.id, adminId: admin_1.admin.id }, app);
             });
             yield prisma.application.createMany({ data: steamGames });

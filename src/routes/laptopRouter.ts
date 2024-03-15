@@ -5,37 +5,42 @@ import {
   updateUploadLaptopMedia,
   uploadLaptopMedia,
 } from "../middlewares/imagekitUpload";
-import { idCheck } from "../middlewares/laptopValidation";
+import { laptopIdCheck } from "../middlewares/idCheck";
 import { authMe } from "../middlewares/authMe";
+import { uploadLaptopMediaValidation } from "../middlewares/imagekitValidation";
 
 const router = Router();
 
 router.get("/", laptops.getAllLaptop);
+
 router.post(
   "/",
   authMe,
   imagesVideos.fields([
     { name: "thumb", maxCount: 1 },
     { name: "videos", maxCount: 1 },
-    { name: "gallery" },
+    { name: "gallery", maxCount: 10 },
   ]),
+  uploadLaptopMediaValidation,
   uploadLaptopMedia,
   laptops.createOneLaptop
 );
 router.get("/:id", laptops.getOneLaptop);
+
 router.patch(
   "/:id",
   authMe,
-  idCheck,
+  laptopIdCheck,
   imagesVideos.fields([
     { name: "thumb", maxCount: 1 },
     { name: "videos", maxCount: 1 },
-    { name: "gallery" },
+    { name: "gallery", maxCount: 10 },
   ]),
-  uploadLaptopMedia,
+  uploadLaptopMediaValidation,
   updateUploadLaptopMedia,
   laptops.updateOneLaptop
 );
-router.delete("/:id", idCheck, laptops.deleteOneLaptop);
+
+router.delete("/:id", laptopIdCheck, laptops.deleteOneLaptop);
 
 export default router;

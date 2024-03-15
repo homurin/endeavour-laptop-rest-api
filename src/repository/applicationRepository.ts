@@ -12,19 +12,29 @@ export async function getAll() {
       linux: true,
       mac: true,
       windows: true,
-      categories: {
-        select: {
-          category: {
-            select: {
-              name: true,
-            },
-          },
-        },
-      },
     },
   });
 
   return applications;
+}
+
+export async function getOneMediaAttributes(id: string) {
+  try {
+    const application = await prisma.application.findFirst({
+      select: {
+        headerImageId: true,
+        headerImage: true,
+        screenshotsId: true,
+        screenshots: true,
+        moviesId: true,
+        movies: true,
+      },
+      where: { id },
+    });
+    return application;
+  } catch (err) {
+    throw err;
+  }
 }
 
 export async function getOne(applicationId: string) {
@@ -56,13 +66,15 @@ export async function getOne(applicationId: string) {
         website: true,
         minOs: {
           select: {
+            id: true,
             name: true,
           },
         },
-        tags: {
+        categories: {
           select: {
-            tags: {
+            category: {
               select: {
+                id: true,
                 name: true,
               },
             },
@@ -72,15 +84,17 @@ export async function getOne(applicationId: string) {
           select: {
             genre: {
               select: {
+                id: true,
                 name: true,
               },
             },
           },
         },
-        categories: {
+        tags: {
           select: {
-            category: {
+            tag: {
               select: {
+                id: true,
                 name: true,
               },
             },
@@ -91,7 +105,6 @@ export async function getOne(applicationId: string) {
         id: applicationId,
       },
     });
-    console.info(application);
     return application;
   } catch (err) {
     throw err;
@@ -118,7 +131,6 @@ export async function updateOne(
       where: { id: applicationId },
       data,
     });
-    console.info(application);
     return application;
   } catch (err) {
     throw err;
@@ -127,51 +139,7 @@ export async function updateOne(
 
 export async function deleteOne(appId: string) {
   try {
-    await prisma.tagsOnApplications.deleteMany({
-      where: { appId },
-    });
-    await prisma.genresOnApplications.deleteMany({ where: { appId } });
-    await prisma.categoriesOnApplications.deleteMany({ where: { appId } });
     await prisma.application.delete({ where: { id: appId } });
-  } catch (err) {
-    throw err;
-  }
-}
-
-export async function addGenres(
-  data: Array<{ appId: string; genreId: string }>
-) {
-  try {
-    const genres = await prisma.genresOnApplications.createMany({
-      data: data,
-      skipDuplicates: true,
-    });
-    return genres;
-  } catch (err) {
-    throw err;
-  }
-}
-
-export async function addCategories(
-  data: Array<{ appId: string; categoryId: string }>
-) {
-  try {
-    const categories = await prisma.categoriesOnApplications.createMany({
-      data: data,
-      skipDuplicates: true,
-    });
-    return categories;
-  } catch (err) {
-    throw err;
-  }
-}
-export async function addtags(data: Array<{ appId: string; tagId: string }>) {
-  try {
-    const genres = await prisma.tagsOnApplications.createMany({
-      data: data,
-      skipDuplicates: true,
-    });
-    return genres;
   } catch (err) {
     throw err;
   }

@@ -46,30 +46,6 @@ function getOnegpu(gpuId) {
                     directX: true,
                     openGl: true,
                     price: true,
-                    laptops: {
-                        select: {
-                            id: true,
-                            name: true,
-                            ram: true,
-                            displayResolution: true,
-                            panelType: true,
-                            hddStorage: true,
-                            ssdStorage: true,
-                            price: true,
-                            thumb: true,
-                            cpu: {
-                                select: {
-                                    name: true,
-                                    baseSpeed: true,
-                                },
-                            },
-                            gpu: {
-                                select: {
-                                    name: true,
-                                },
-                            },
-                        },
-                    },
                 },
                 where: {
                     id: gpuId,
@@ -87,7 +63,7 @@ function creategpu(data) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const gpu = yield prisma.gpu.create({
-                data: Object.assign({}, data),
+                data,
             });
             return gpu;
         }
@@ -102,7 +78,7 @@ function updategpu(gpuId, data) {
         try {
             const gpu = yield prisma.gpu.update({
                 where: { id: gpuId },
-                data: data,
+                data,
             });
             return gpu;
         }
@@ -115,6 +91,7 @@ exports.updategpu = updategpu;
 function deletegpu(gpuId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            yield prisma.laptop.deleteMany({ where: { gpuId } });
             yield prisma.gpu.delete({ where: { id: gpuId } });
         }
         catch (err) {

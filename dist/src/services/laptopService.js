@@ -35,13 +35,69 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteOneLaptop = exports.updateOneLaptop = exports.createOneLaptop = exports.getOneLaptop = exports.getAllLaptop = void 0;
 const Laptop = __importStar(require("../repository/laptopRepository"));
 const uuid_1 = require("uuid");
-function getAllLaptop() {
+const library_1 = require("@prisma/client/runtime/library");
+const apiError_1 = require("../utils/apiError");
+function getAllLaptop(option) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const data = yield Laptop.getAll();
-            return data;
+            const laptopsSelect = {
+                id: true,
+                name: true,
+                ram: true,
+                displayResolution: true,
+                panelType: true,
+                hddStorage: true,
+                ssdStorage: true,
+                price: true,
+                thumb: true,
+                cpu: {
+                    select: {
+                        name: true,
+                        baseSpeed: true,
+                    },
+                },
+                gpu: {
+                    select: {
+                        name: true,
+                    },
+                },
+            };
+            const laptopQuery = {};
+            const laptopOrder = {};
+            const pagination = {};
+            if (option === null || option === void 0 ? void 0 : option.name) {
+                console.info(option);
+                laptopQuery.name = {
+                    contains: `${option.name}`,
+                    mode: "insensitive",
+                };
+            }
+            if (option === null || option === void 0 ? void 0 : option.price) {
+                laptopQuery.price = {
+                    gte: Number(option.price),
+                };
+            }
+            if (option === null || option === void 0 ? void 0 : option.priceOrder) {
+                laptopOrder.price = option.priceOrder;
+            }
+            if ((option === null || option === void 0 ? void 0 : option.page) && (option === null || option === void 0 ? void 0 : option.show)) {
+                pagination.take = Number(option.show);
+                pagination.skip =
+                    Number(option.show) * Number(option.page) - Number(option.show);
+                console.info("take", pagination.take);
+                console.info("skip", pagination.skip);
+            }
+            const count = yield Laptop.count();
+            const data = yield Laptop.getAll(laptopsSelect, pagination, laptopQuery, laptopOrder);
+            console.info(data.length);
+            return {
+                data,
+                showedLength: data.length,
+                count,
+            };
         }
         catch (err) {
+            console.info(err);
             throw err;
         }
     });
@@ -59,16 +115,66 @@ function getOneLaptop(id) {
     });
 }
 exports.getOneLaptop = getOneLaptop;
-function createOneLaptop(laptop, galleries) {
+function createOneLaptop(data) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const gallery = galleries;
-            const data = Object.assign(Object.assign({}, laptop), { id: (0, uuid_1.v4)(), adminId: "5d1bee8e-b995-41c5-9fed-e4e537e6a8ab", ram: Number(laptop.ram), hddStorage: Number(laptop.hddStorage), ssdStorage: Number(laptop.hddStorage), displaySize: Number(laptop.displaySize), price: Number(laptop.price), weight: Number(laptop.weight), panelCode: Number(laptop.panelCode), refreshRate: Number(laptop.refreshRate), workstationScore: Number(laptop.workstationScore), gamingScore: Number(laptop.gamingScore), isNew: Boolean(JSON.parse(String(laptop.isNew))), galleries: {
-                    createMany: {
-                        data: gallery,
+            const laptop = {
+                id: (0, uuid_1.v4)(),
+                admin: {
+                    connect: {
+                        id: data.adminId,
                     },
-                } });
-            const createdLaptop = yield Laptop.createOne(data);
+                },
+                cpu: {
+                    connect: {
+                        id: data.cpuId,
+                    },
+                },
+                gpu: {
+                    connect: {
+                        id: data.gpuId,
+                    },
+                },
+                windowsVersion: {
+                    connect: {
+                        id: data.winId,
+                    },
+                },
+                brand: {
+                    connect: {
+                        id: data.brandId,
+                    },
+                },
+                thumbId: data.thumbId,
+                videosId: data.videosId,
+                thumb: data.thumb,
+                videos: data.videos,
+                name: data.name,
+                hddStorage: Number(data.hddStorage),
+                ssdStorage: Number(data.ssdStorage),
+                ram: Number(data.ram),
+                displayName: data.displayName,
+                displayResolution: data.displayResolution,
+                displaySize: Number(data.displaySize),
+                gamingScore: Number(),
+                workstationScore: Number(),
+                refreshRate: Number(data.refreshRate),
+                isNew: JSON.parse(String(data.isNew)) || true,
+                suitableFor: data.suitableFor,
+                osEdition: data.osEdition,
+                price: Number(data.price),
+                panelCode: Number(data.panelCode),
+                weight: Number(data.weight),
+                panelType: data.panelType,
+            };
+            if (data.galleries) {
+                laptop.galleries = {
+                    createMany: {
+                        data: data.galleries,
+                    },
+                };
+            }
+            const createdLaptop = yield Laptop.createOne(laptop);
             return createdLaptop;
         }
         catch (err) {
@@ -77,19 +183,81 @@ function createOneLaptop(laptop, galleries) {
     });
 }
 exports.createOneLaptop = createOneLaptop;
-function updateOneLaptop(laptopId, laptop, galleries) {
+function updateOneLaptop(laptopId, data) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const gallery = galleries;
-            const data = Object.assign(Object.assign({}, laptop), { adminId: "5d1bee8e-b995-41c5-9fed-e4e537e6a8ab", ram: Number(laptop.ram), hddStorage: Number(laptop.hddStorage), ssdStorage: Number(laptop.hddStorage), displaySize: Number(laptop.displaySize), price: Number(laptop.price), weight: Number(laptop.weight), panelCode: Number(laptop.panelCode), refreshRate: Number(laptop.refreshRate), workstationScore: Number(laptop.workstationScore), gamingScore: Number(laptop.gamingScore), isNew: Boolean(JSON.parse(String(laptop.isNew))), galleries: {
-                    createMany: {
-                        data: gallery,
+            const laptop = {
+                admin: {
+                    connect: {
+                        id: data.adminId,
                     },
-                } });
-            const updatedLaptop = yield Laptop.updateOne(laptopId, data);
+                },
+                cpu: {
+                    connect: {
+                        id: data.cpuId,
+                    },
+                },
+                gpu: {
+                    connect: {
+                        id: data.gpuId,
+                    },
+                },
+                windowsVersion: {
+                    connect: {
+                        id: data.winId,
+                    },
+                },
+                brand: {
+                    connect: {
+                        id: data.brandId,
+                    },
+                },
+                thumbId: data.thumbId,
+                videosId: data.videosId,
+                thumb: data.thumb,
+                videos: data.videos,
+                name: data.name,
+                hddStorage: Number(data.hddStorage),
+                ssdStorage: Number(data.ssdStorage),
+                ram: Number(data.ram),
+                displayName: data.displayName,
+                displayResolution: data.displayResolution,
+                displaySize: Number(data.displaySize),
+                gamingScore: Number(),
+                workstationScore: Number(),
+                refreshRate: Number(data.refreshRate),
+                isNew: JSON.parse(String(data.isNew)) || true,
+                suitableFor: data.suitableFor,
+                osEdition: data.osEdition,
+                price: Number(data.price),
+                panelCode: Number(data.panelCode),
+                weight: Number(data.weight),
+                panelType: data.panelType,
+            };
+            if (data.galleries) {
+                laptop.galleries = {
+                    createMany: {
+                        data: data.galleries,
+                    },
+                };
+            }
+            if (data.deleteGalleries) {
+                laptop.galleries = {
+                    deleteMany: {
+                        id: {
+                            in: data.deleteGalleries,
+                        },
+                    },
+                };
+            }
+            const updatedLaptop = yield Laptop.updateOne(laptopId, laptop);
             return updatedLaptop;
         }
         catch (err) {
+            const error = err;
+            if (error instanceof library_1.PrismaClientValidationError) {
+                throw new apiError_1.SendError(`${error.message}`, 400);
+            }
             throw err;
         }
     });
@@ -98,7 +266,7 @@ exports.updateOneLaptop = updateOneLaptop;
 function deleteOneLaptop(laptopId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            yield yield Laptop.deleteOne(laptopId);
+            yield Laptop.deleteOne(laptopId);
         }
         catch (err) {
             throw err;

@@ -24,24 +24,25 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const laptops = __importStar(require("../controllers/laptopsController"));
+const laptops = __importStar(require("../controllers/laptopController"));
 const multer_1 = require("../middlewares/multer");
-const multerValidation_1 = require("../middlewares/multerValidation");
 const imagekitUpload_1 = require("../middlewares/imagekitUpload");
-const laptopValidation_1 = require("../middlewares/laptopValidation");
+const idCheck_1 = require("../middlewares/idCheck");
+const authMe_1 = require("../middlewares/authMe");
+const imagekitValidation_1 = require("../middlewares/imagekitValidation");
 const router = (0, express_1.Router)();
 router.get("/", laptops.getAllLaptop);
-router.post("/", multer_1.imagesVideos.fields([
+router.post("/", authMe_1.authMe, multer_1.imagesVideos.fields([
     { name: "thumb", maxCount: 1 },
     { name: "videos", maxCount: 1 },
-    { name: "gallery" },
-]), multerValidation_1.laptopMulterValidation, imagekitUpload_1.uploadLaptopMedia, laptops.createOneLaptop);
+    { name: "gallery", maxCount: 10 },
+]), imagekitValidation_1.uploadLaptopMediaValidation, imagekitUpload_1.uploadLaptopMedia, laptops.createOneLaptop);
 router.get("/:id", laptops.getOneLaptop);
-router.patch("/:id", laptopValidation_1.idCheck, multer_1.imagesVideos.fields([
+router.patch("/:id", authMe_1.authMe, idCheck_1.laptopIdCheck, multer_1.imagesVideos.fields([
     { name: "thumb", maxCount: 1 },
     { name: "videos", maxCount: 1 },
-    { name: "gallery" },
-]), multerValidation_1.laptopMulterValidation, imagekitUpload_1.uploadLaptopMedia, imagekitUpload_1.updateUploadLaptopMedia, laptops.updateOneLaptop);
-router.delete("/:id", laptopValidation_1.idCheck, laptops.deleteOneLaptop);
+    { name: "gallery", maxCount: 10 },
+]), imagekitValidation_1.uploadLaptopMediaValidation, imagekitUpload_1.updateUploadLaptopMedia, laptops.updateOneLaptop);
+router.delete("/:id", idCheck_1.laptopIdCheck, laptops.deleteOneLaptop);
 exports.default = router;
 //# sourceMappingURL=laptopRouter.js.map

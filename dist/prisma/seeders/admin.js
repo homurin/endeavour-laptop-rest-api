@@ -14,19 +14,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.adminSeed = exports.admin = void 0;
 const client_1 = require("@prisma/client");
-const bcrypt_1 = __importDefault(require("bcrypt"));
+const bcrypt_1 = require("../../src/libs/bcrypt");
 const uuid_1 = require("uuid");
 const dotenv_1 = __importDefault(require("dotenv"));
 const process_1 = __importDefault(require("process"));
 dotenv_1.default.config();
 const prisma = new client_1.PrismaClient();
 const adminConfig = () => {
-    const saltRounds = Number(process_1.default.env.SALT_ROUNDS);
     const password = process_1.default.env.ADMIN_PASSWORD || "endeavours2024";
-    const hashedPassword = bcrypt_1.default.hashSync(password, saltRounds);
+    const hashedPassword = (0, bcrypt_1.encryptPasswordSync)(password);
     return {
         id: (0, uuid_1.v4)(),
-        username: "endeavours",
+        username: process_1.default.env.ADMIN_USERNAME || "endeavours",
         password: hashedPassword,
         fullName: "Endeavour Morse",
         email: "endeavours@endeavours.com",

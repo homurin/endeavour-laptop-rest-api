@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { SendError } from "@utils/apiError";
 import * as laptopService from "@services/laptopService";
-import { Prisma } from "@prisma/client";
-import { RequestGallery } from "../types/laptop";
+import { LaptopGetAllQuery, LaptopRequestBody } from "../models/laptop";
 
 export async function getAllLaptop(
   req: Request,
@@ -10,10 +9,18 @@ export async function getAllLaptop(
   next: NextFunction
 ): Promise<void> {
   try {
-    const laptops = await laptopService.getAllLaptop();
+    let query: LaptopGetAllQuery = {};
+
+    if (req.query) {
+      query = req.query;
+    }
+
+    const laptops = await laptopService.getAllLaptop(query);
     res.status(200).json({
       message: "success",
-      laptops,
+      total: laptops.count,
+      showed: laptops.showedLength,
+      laptops: laptops.data,
     });
   } catch (err) {
     next(new SendError("internal server error", 500));
@@ -49,20 +56,11 @@ export async function createOneLaptop(
   next: NextFunction
 ): Promise<void> {
   try {
-    let galleries: RequestGallery[] = [];
-
-    if (req.galleries) {
-      galleries = req.galleries;
-    }
-
-    const laptop = req.body as Prisma.LaptopUncheckedCreateInput;
+    const laptop = req.body as LaptopRequestBody;
     if (req.user) {
       laptop.adminId = req.user.id;
     }
-    const createdLaptop = await laptopService.createOneLaptop(
-      laptop,
-      galleries
-    );
+    const createdLaptop = await laptopService.createOneLaptop(laptop);
     res.status(201).json({
       message: "success",
       laptop: createdLaptop,
@@ -81,28 +79,22 @@ export async function updateOneLaptop(
   try {
     const id: string = req.params.id;
 
-    let galleries: RequestGallery[] = [];
-    const laptop = req.body as Prisma.LaptopUncheckedUpdateInput;
+    const laptop = req.body as LaptopRequestBody;
 
     if (req.user) {
       laptop.adminId = req.user.id;
     }
 
-    if (req.galleries) {
-      galleries = req.galleries;
-    }
-
-    const updatedLaptop = await laptopService.updateOneLaptop(
-      id,
-      laptop,
-      galleries
-    );
-    res.status(201).json({
+    const updatedLaptop = await laptopService.updateOneLaptop(id, laptop);
+    res.status(200).json({
       message: "success",
       laptop: updatedLaptop,
     });
   } catch (err) {
-    console.info(err);
+    const error = err as Error;
+    if (error instanceof SendError) {
+      next(new SendError(error.message, error.statusCode));
+    }
     next(new SendError("internal server error", 500));
   }
 }

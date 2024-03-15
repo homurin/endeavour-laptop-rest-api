@@ -9,35 +9,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteOne = exports.updateOne = exports.createOne = exports.getOne = exports.getOneFullDesc = exports.getAll = void 0;
+exports.deleteGallery = exports.bulkCreateGallery = exports.deleteOne = exports.updateOne = exports.createOne = exports.getOne = exports.getOneFullDesc = exports.count = exports.getAll = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
-function getAll() {
+function getAll(field, pagination, option, orderByOption) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const laptopsSelect = {
-                id: true,
-                name: true,
-                ram: true,
-                displayResolution: true,
-                panelType: true,
-                hddStorage: true,
-                ssdStorage: true,
-                price: true,
-                thumb: true,
-                cpu: {
-                    select: {
-                        name: true,
-                        baseSpeed: true,
-                    },
-                },
-                gpu: {
-                    select: {
-                        name: true,
-                    },
-                },
-            };
-            const laptops = yield prisma.laptop.findMany({ select: laptopsSelect });
+            const laptops = yield prisma.laptop.findMany({
+                select: field,
+                where: option,
+                orderBy: orderByOption,
+                skip: pagination.skip,
+                take: pagination.take,
+            });
             return laptops;
         }
         catch (err) {
@@ -46,6 +30,13 @@ function getAll() {
     });
 }
 exports.getAll = getAll;
+function count() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const total = yield prisma.laptop.count();
+        return total;
+    });
+}
+exports.count = count;
 function getOneFullDesc(laptopId) {
     return __awaiter(this, void 0, void 0, function* () {
         const laptop = yield prisma.laptop.findFirst({
@@ -131,8 +122,20 @@ exports.getOne = getOne;
 function createOne(data) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const laptop = yield prisma.laptop.create({ data });
-            return laptop;
+            const createdLaptop = yield prisma.laptop.create({
+                data,
+                include: {
+                    galleries: {
+                        select: {
+                            id: true,
+                            image: true,
+                            createdAt: true,
+                            updatedAt: true,
+                        },
+                    },
+                },
+            });
+            return createdLaptop;
         }
         catch (err) {
             throw err;
@@ -143,11 +146,21 @@ exports.createOne = createOne;
 function updateOne(laptopId, data) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const laptop = yield prisma.laptop.update({
-                data: data,
+            const updatedData = yield prisma.laptop.update({
+                data,
                 where: { id: laptopId },
+                include: {
+                    galleries: {
+                        select: {
+                            id: true,
+                            image: true,
+                            createdAt: true,
+                            updatedAt: true,
+                        },
+                    },
+                },
             });
-            return laptop;
+            return updatedData;
         }
         catch (err) {
             throw err;
@@ -167,4 +180,29 @@ function deleteOne(laptopId) {
     });
 }
 exports.deleteOne = deleteOne;
+function bulkCreateGallery(galleries) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const data = yield prisma.gallery.createMany({
+                data: galleries,
+            });
+            return data;
+        }
+        catch (err) {
+            throw err;
+        }
+    });
+}
+exports.bulkCreateGallery = bulkCreateGallery;
+function deleteGallery(galleryIds) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            yield prisma.gallery.deleteMany({ where: { id: { in: galleryIds } } });
+        }
+        catch (err) {
+            throw err;
+        }
+    });
+}
+exports.deleteGallery = deleteGallery;
 //# sourceMappingURL=laptopRepository.js.map

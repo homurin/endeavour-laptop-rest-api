@@ -9,10 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteApplication = exports.updateApplication = exports.createApplication = exports.getOneApplication = exports.getAllApplication = void 0;
+exports.deleteOne = exports.updateOne = exports.createOne = exports.getOne = exports.getOneMediaAttributes = exports.getAll = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
-function getAllApplication() {
+function getAll() {
     return __awaiter(this, void 0, void 0, function* () {
         const applications = yield prisma.application.findMany({
             select: {
@@ -23,22 +23,35 @@ function getAllApplication() {
                 linux: true,
                 mac: true,
                 windows: true,
-                categories: {
-                    select: {
-                        category: {
-                            select: {
-                                name: true,
-                            },
-                        },
-                    },
-                },
             },
         });
         return applications;
     });
 }
-exports.getAllApplication = getAllApplication;
-function getOneApplication(applicationId) {
+exports.getAll = getAll;
+function getOneMediaAttributes(id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const application = yield prisma.application.findFirst({
+                select: {
+                    headerImageId: true,
+                    headerImage: true,
+                    screenshotsId: true,
+                    screenshots: true,
+                    moviesId: true,
+                    movies: true,
+                },
+                where: { id },
+            });
+            return application;
+        }
+        catch (err) {
+            throw err;
+        }
+    });
+}
+exports.getOneMediaAttributes = getOneMediaAttributes;
+function getOne(applicationId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const application = yield prisma.application.findFirst({
@@ -68,13 +81,15 @@ function getOneApplication(applicationId) {
                     website: true,
                     minOs: {
                         select: {
+                            id: true,
                             name: true,
                         },
                     },
-                    tags: {
+                    categories: {
                         select: {
-                            tags: {
+                            category: {
                                 select: {
+                                    id: true,
                                     name: true,
                                 },
                             },
@@ -84,15 +99,17 @@ function getOneApplication(applicationId) {
                         select: {
                             genre: {
                                 select: {
+                                    id: true,
                                     name: true,
                                 },
                             },
                         },
                     },
-                    categories: {
+                    tags: {
                         select: {
-                            category: {
+                            tag: {
                                 select: {
+                                    id: true,
                                     name: true,
                                 },
                             },
@@ -103,7 +120,6 @@ function getOneApplication(applicationId) {
                     id: applicationId,
                 },
             });
-            console.info(application);
             return application;
         }
         catch (err) {
@@ -111,12 +127,12 @@ function getOneApplication(applicationId) {
         }
     });
 }
-exports.getOneApplication = getOneApplication;
-function createApplication(data) {
+exports.getOne = getOne;
+function createOne(data) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const application = yield prisma.application.create({
-                data: Object.assign({}, data),
+                data,
             });
             return application;
         }
@@ -125,15 +141,14 @@ function createApplication(data) {
         }
     });
 }
-exports.createApplication = createApplication;
-function updateApplication(applicationId, data) {
+exports.createOne = createOne;
+function updateOne(applicationId, data) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const application = yield prisma.application.update({
                 where: { id: applicationId },
-                data: data,
+                data,
             });
-            console.info(application);
             return application;
         }
         catch (err) {
@@ -141,16 +156,16 @@ function updateApplication(applicationId, data) {
         }
     });
 }
-exports.updateApplication = updateApplication;
-function deleteApplication(applicationId) {
+exports.updateOne = updateOne;
+function deleteOne(appId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            yield prisma.application.delete({ where: { id: applicationId } });
+            yield prisma.application.delete({ where: { id: appId } });
         }
         catch (err) {
             throw err;
         }
     });
 }
-exports.deleteApplication = deleteApplication;
+exports.deleteOne = deleteOne;
 //# sourceMappingURL=applicationRepository.js.map

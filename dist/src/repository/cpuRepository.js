@@ -43,30 +43,6 @@ function getOnecpu(cpuId) {
                     threads: true,
                     benchmark: true,
                     createdAt: true,
-                    laptops: {
-                        select: {
-                            id: true,
-                            name: true,
-                            ram: true,
-                            displayResolution: true,
-                            panelType: true,
-                            hddStorage: true,
-                            ssdStorage: true,
-                            price: true,
-                            thumb: true,
-                            cpu: {
-                                select: {
-                                    name: true,
-                                    baseSpeed: true,
-                                },
-                            },
-                            gpu: {
-                                select: {
-                                    name: true,
-                                },
-                            },
-                        },
-                    },
                 },
                 where: {
                     id: cpuId,
@@ -84,7 +60,7 @@ function createCpu(data) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const cpu = yield prisma.cpu.create({
-                data: Object.assign({}, data),
+                data,
             });
             return cpu;
         }
@@ -98,8 +74,8 @@ function updateCpu(cpuId, data) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const cpu = yield prisma.cpu.update({
-                where: { id: cpuId },
                 data: data,
+                where: { id: cpuId },
             });
             return cpu;
         }
@@ -112,6 +88,7 @@ exports.updateCpu = updateCpu;
 function deleteCpu(cpuId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            yield prisma.laptop.deleteMany({ where: { cpuId } });
             yield prisma.cpu.delete({ where: { id: cpuId } });
         }
         catch (err) {

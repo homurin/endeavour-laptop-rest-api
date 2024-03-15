@@ -34,30 +34,6 @@ export async function getOnegpu(gpuId: string) {
         directX: true,
         openGl: true,
         price: true,
-        laptops: {
-          select: {
-            id: true,
-            name: true,
-            ram: true,
-            displayResolution: true,
-            panelType: true,
-            hddStorage: true,
-            ssdStorage: true,
-            price: true,
-            thumb: true,
-            cpu: {
-              select: {
-                name: true,
-                baseSpeed: true,
-              },
-            },
-            gpu: {
-              select: {
-                name: true,
-              },
-            },
-          },
-        },
       },
       where: {
         id: gpuId,
@@ -72,9 +48,7 @@ export async function getOnegpu(gpuId: string) {
 export async function creategpu(data: Prisma.GpuUncheckedCreateInput) {
   try {
     const gpu = await prisma.gpu.create({
-      data: {
-        ...data,
-      },
+      data,
     });
     return gpu;
   } catch (err) {
@@ -86,7 +60,7 @@ export async function updategpu(gpuId: string, data: Prisma.GpuUpdateInput) {
   try {
     const gpu = await prisma.gpu.update({
       where: { id: gpuId },
-      data: data,
+      data,
     });
 
     return gpu;
@@ -97,6 +71,7 @@ export async function updategpu(gpuId: string, data: Prisma.GpuUpdateInput) {
 
 export async function deletegpu(gpuId: string) {
   try {
+    await prisma.laptop.deleteMany({ where: { gpuId } });
     await prisma.gpu.delete({ where: { id: gpuId } });
   } catch (err) {
     throw err;

@@ -22,7 +22,7 @@ const adminConfig = (): Admin => {
 
   return {
     id: uuid(),
-    username: "endeavours",
+    username: process.env.ADMIN_USERNAME || "endeavours",
     password: hashedPassword,
     fullName: "Endeavour Morse",
     email: "endeavours@endeavours.com",

@@ -1,37 +1,32 @@
-import { Laptop, Prisma, PrismaClient } from "@prisma/client";
+import { Gallery, Laptop, Prisma, PrismaClient } from "@prisma/client";
+import { LaptopRequestBody } from "../models/laptop";
 
 const prisma = new PrismaClient();
 
-export async function getAll() {
+export async function getAll(
+  field: Prisma.LaptopSelect,
+  pagination: { skip?: number; take?: number },
+  option?: Prisma.LaptopWhereInput,
+  orderByOption?: Prisma.LaptopOrderByWithRelationInput
+) {
   try {
-    const laptopsSelect = {
-      id: true,
-      name: true,
-      ram: true,
-      displayResolution: true,
-      panelType: true,
-      hddStorage: true,
-      ssdStorage: true,
-      price: true,
-      thumb: true,
-      cpu: {
-        select: {
-          name: true,
-          baseSpeed: true,
-        },
-      },
-      gpu: {
-        select: {
-          name: true,
-        },
-      },
-    };
-    const laptops = await prisma.laptop.findMany({ select: laptopsSelect });
+    const laptops = await prisma.laptop.findMany({
+      select: field,
+      where: option,
+      orderBy: orderByOption,
+      skip: pagination.skip,
+      take: pagination.take,
+    });
 
     return laptops;
   } catch (err) {
     throw err;
   }
+}
+
+export async function count(): Promise<number> {
+  const total = await prisma.laptop.count();
+  return total;
 }
 
 export async function getOneFullDesc(laptopId: string) {
@@ -112,10 +107,22 @@ export async function getOne(laptopId: string) {
   }
 }
 
-export async function createOne(data: Prisma.LaptopUncheckedCreateInput) {
+export async function createOne(data: Prisma.LaptopCreateInput) {
   try {
-    const laptop = await prisma.laptop.create({ data });
-    return laptop;
+    const createdLaptop = await prisma.laptop.create({
+      data,
+      include: {
+        galleries: {
+          select: {
+            id: true,
+            image: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
+      },
+    });
+    return createdLaptop;
   } catch (err) {
     throw err;
   }
@@ -123,14 +130,24 @@ export async function createOne(data: Prisma.LaptopUncheckedCreateInput) {
 
 export async function updateOne(
   laptopId: string,
-  data: Prisma.LaptopUncheckedUpdateInput
+  data: Prisma.LaptopUpdateInput
 ) {
   try {
-    const laptop: Laptop = await prisma.laptop.update({
-      data: data,
+    const updatedData: Laptop = await prisma.laptop.update({
+      data,
       where: { id: laptopId },
+      include: {
+        galleries: {
+          select: {
+            id: true,
+            image: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
+      },
     });
-    return laptop;
+    return updatedData;
   } catch (err) {
     throw err;
   }
@@ -140,6 +157,25 @@ export async function deleteOne(laptopId: string) {
   try {
     await prisma.gallery.deleteMany({ where: { laptopId: laptopId } });
     await prisma.laptop.delete({ where: { id: laptopId } });
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function bulkCreateGallery(galleries: Gallery[]) {
+  try {
+    const data = await prisma.gallery.createMany({
+      data: galleries,
+    });
+    return data;
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function deleteGallery(galleryIds: string[]) {
+  try {
+    await prisma.gallery.deleteMany({ where: { id: { in: galleryIds } } });
   } catch (err) {
     throw err;
   }

@@ -240,7 +240,7 @@ model TagsOnApplications {
   appId        String      @db.VarChar(36)
   tagId        String      @db.VarChar(36)
   applications Application @relation(fields: [appId], references: [id])
-  tags         Tag         @relation(fields: [tagId], references: [id])
+  tag         Tag         @relation(fields: [tagId], references: [id])
 
   @@id([appId, tagId])
 }
