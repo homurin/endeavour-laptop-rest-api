@@ -2,17 +2,21 @@ import { PrismaClient, Prisma } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function getAll() {
+export async function count(): Promise<number> {
+  const count = await prisma.application.count();
+  return count;
+}
+
+export async function getAll(
+  fields: Prisma.ApplicationSelect,
+  pagination: { skip?: number; take?: number },
+  option?: Prisma.ApplicationWhereInput
+) {
   const applications = await prisma.application.findMany({
-    select: {
-      id: true,
-      name: true,
-      headerImage: true,
-      price: true,
-      linux: true,
-      mac: true,
-      windows: true,
-    },
+    select: fields,
+    where: option,
+    skip: pagination.skip,
+    take: pagination.take,
   });
 
   return applications;
@@ -37,70 +41,13 @@ export async function getOneMediaAttributes(id: string) {
   }
 }
 
-export async function getOne(applicationId: string) {
+export async function getOne(
+  applicationId: string,
+  fields?: Prisma.ApplicationSelect
+) {
   try {
     const application = await prisma.application.findFirst({
-      select: {
-        id: true,
-        name: true,
-        price: true,
-        minCpuSpeed: true,
-        minCores: true,
-        minGpuBoostClock: true,
-        minGpuMemory: true,
-        minDirectX: true,
-        minOpenGl: true,
-        minRam: true,
-        minStorage: true,
-        link: true,
-        headerImage: true,
-        screenshots: true,
-        movies: true,
-        description: true,
-        developers: true,
-        publishers: true,
-        linux: true,
-        mac: true,
-        windows: true,
-        releaseDate: true,
-        website: true,
-        minOs: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-        categories: {
-          select: {
-            category: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        },
-        genres: {
-          select: {
-            genre: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        },
-        tags: {
-          select: {
-            tag: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        },
-      },
+      select: fields,
       where: {
         id: applicationId,
       },
@@ -111,10 +58,14 @@ export async function getOne(applicationId: string) {
   }
 }
 
-export async function createOne(data: Prisma.ApplicationUncheckedCreateInput) {
+export async function createOne(data: Prisma.ApplicationCreateInput) {
   try {
     const application = await prisma.application.create({
       data,
+      include: {
+        admin: true,
+        minOs: true,
+      },
     });
     return application;
   } catch (err) {
@@ -124,12 +75,16 @@ export async function createOne(data: Prisma.ApplicationUncheckedCreateInput) {
 
 export async function updateOne(
   applicationId: string,
-  data: Prisma.ApplicationUncheckedUpdateInput
+  data: Prisma.ApplicationUpdateInput
 ) {
   try {
     const application = await prisma.application.update({
       where: { id: applicationId },
       data,
+      include: {
+        admin: true,
+        minOs: true,
+      },
     });
     return application;
   } catch (err) {

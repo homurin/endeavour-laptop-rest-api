@@ -12,13 +12,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteGallery = exports.bulkCreateGallery = exports.deleteOne = exports.updateOne = exports.createOne = exports.getOne = exports.getOneFullDesc = exports.count = exports.getAll = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
-function getAll(field, pagination, option, orderByOption) {
+function getAll(field, pagination, option) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const laptops = yield prisma.laptop.findMany({
                 select: field,
                 where: option,
-                orderBy: orderByOption,
                 skip: pagination.skip,
                 take: pagination.take,
             });

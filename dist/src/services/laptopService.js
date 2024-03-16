@@ -37,7 +37,7 @@ const Laptop = __importStar(require("../repository/laptopRepository"));
 const uuid_1 = require("uuid");
 const library_1 = require("@prisma/client/runtime/library");
 const apiError_1 = require("../utils/apiError");
-function getAllLaptop(option) {
+function getAllLaptop(options) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const laptopsSelect = {
@@ -63,37 +63,24 @@ function getAllLaptop(option) {
                 },
             };
             const laptopQuery = {};
-            const laptopOrder = {};
             const pagination = {};
-            if (option === null || option === void 0 ? void 0 : option.name) {
-                console.info(option);
+            const totalCount = yield Laptop.count();
+            if (options === null || options === void 0 ? void 0 : options.name) {
+                console.info(options);
                 laptopQuery.name = {
-                    contains: `${option.name}`,
+                    contains: options.name,
                     mode: "insensitive",
                 };
             }
-            if (option === null || option === void 0 ? void 0 : option.price) {
-                laptopQuery.price = {
-                    gte: Number(option.price),
-                };
+            if ((options === null || options === void 0 ? void 0 : options.page) && (options === null || options === void 0 ? void 0 : options.size)) {
+                pagination.take = Number(options.size);
+                pagination.skip = (Number(options.page) - 1) * Number(options.size);
             }
-            if (option === null || option === void 0 ? void 0 : option.priceOrder) {
-                laptopOrder.price = option.priceOrder;
-            }
-            if ((option === null || option === void 0 ? void 0 : option.page) && (option === null || option === void 0 ? void 0 : option.show)) {
-                pagination.take = Number(option.show);
-                pagination.skip =
-                    Number(option.show) * Number(option.page) - Number(option.show);
-                console.info("take", pagination.take);
-                console.info("skip", pagination.skip);
-            }
-            const count = yield Laptop.count();
-            const data = yield Laptop.getAll(laptopsSelect, pagination, laptopQuery, laptopOrder);
-            console.info(data.length);
+            const data = yield Laptop.getAll(laptopsSelect, pagination, laptopQuery);
             return {
                 data,
-                showedLength: data.length,
-                count,
+                dataCount: data.length,
+                totalCount,
             };
         }
         catch (err) {

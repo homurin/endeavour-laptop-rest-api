@@ -4,7 +4,7 @@ import * as imagekit from "@libs/imagekit";
 import { SendError } from "@utils/apiError";
 import * as Laptop from "@repository/laptopRepository";
 import * as applicationService from "@services/applicationService";
-import { CreateAppRequestBody } from "@models/application";
+import { AppRequestBody } from "@models/application";
 import MulterFiles from "@models/multer";
 import { LaptopRequestBody } from "@models/laptop";
 
@@ -76,7 +76,10 @@ export async function updateUploadLaptopMedia(
     }
 
     if (gallery) {
-      const galleryData = await imagekit.bulkUploadImage(gallery, "laptop");
+      const galleryData = await imagekit.bulkUploadImage(
+        gallery,
+        "laptop/galleries"
+      );
       const data = galleryData.map((gal) => {
         return {
           id: gal.fileId,
@@ -111,7 +114,7 @@ export async function uploadAppMedia(
   next: NextFunction
 ) {
   try {
-    const laptop = req.body as CreateAppRequestBody;
+    const laptop = req.body as AppRequestBody;
     const files = req.files as MulterFiles;
 
     const headerImage = files?.["headerImage"];
@@ -126,6 +129,7 @@ export async function uploadAppMedia(
       laptop.headerImageId = uploaded.fileId;
       laptop.headerImage = uploaded.url;
     }
+
     if (screenshots) {
       const uploaded = await imagekit.uploadImage(
         screenshots[0],
@@ -134,11 +138,13 @@ export async function uploadAppMedia(
       laptop.screenshotsId = uploaded.fileId;
       laptop.screenshots = uploaded.url;
     }
+
     if (movies) {
       const uploaded = await imagekit.uploadVideos(movies[0], "apps/movies");
       laptop.moviesId = uploaded.fileId;
       laptop.movies = uploaded.url;
     }
+
     next();
   } catch (err) {
     const error = err as Error;
@@ -159,7 +165,7 @@ export async function updateUploadAppMedia(
       req.params.id
     );
 
-    const app = req.body as CreateAppRequestBody;
+    const app = req.body as AppRequestBody;
     const files = req.files as MulterFiles;
 
     const headerImage = files?.["headerImage"];

@@ -12,8 +12,8 @@ import { SendError } from "../utils/apiError";
 import { LaptopRequestBody, LaptopGetAllQuery } from "@models/laptop";
 
 export async function getAllLaptop(
-  option?: LaptopGetAllQuery
-): Promise<{ data: GetAllLaptop; showedLength: number; count: number }> {
+  options?: LaptopGetAllQuery
+): Promise<{ data: GetAllLaptop; dataCount: number; totalCount: number }> {
   try {
     const laptopsSelect: Prisma.LaptopSelect = {
       id: true,
@@ -38,45 +38,32 @@ export async function getAllLaptop(
       },
     };
     const laptopQuery: Prisma.LaptopWhereInput = {};
-    const laptopOrder: Prisma.LaptopOrderByWithRelationInput = {};
     const pagination: { skip?: number; take?: number } = {};
+    const totalCount = await Laptop.count();
 
-    if (option?.name) {
-      console.info(option);
+    if (options?.name) {
+      console.info(options);
       laptopQuery.name = {
-        contains: `${option.name}`,
+        contains: options.name,
         mode: "insensitive",
       };
     }
-    if (option?.price) {
-      laptopQuery.price = {
-        gte: Number(option.price),
-      };
-    }
-    if (option?.priceOrder) {
-      laptopOrder.price = option.priceOrder as Prisma.SortOrder;
-    }
 
-    if (option?.page && option?.show) {
-      pagination.take = Number(option.show);
-      pagination.skip =
-        Number(option.show) * Number(option.page) - Number(option.show);
-      console.info("take", pagination.take);
-      console.info("skip", pagination.skip);
+    if (options?.page && options?.size) {
+      pagination.take = Number(options.size);
+      pagination.skip = (Number(options.page) - 1) * Number(options.size);
     }
-    const count = await Laptop.count();
 
     const data: GetAllLaptop = await Laptop.getAll(
       laptopsSelect,
       pagination,
-      laptopQuery,
-      laptopOrder
+      laptopQuery
     );
-    console.info(data.length);
+
     return {
       data,
-      showedLength: data.length,
-      count,
+      dataCount: data.length,
+      totalCount,
     };
   } catch (err) {
     console.info(err);

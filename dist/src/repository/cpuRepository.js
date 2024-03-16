@@ -9,41 +9,41 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteCpu = exports.updateCpu = exports.createCpu = exports.getOnecpu = exports.getAllCpu = void 0;
+exports.getOne = exports.count = exports.getAll = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
-function getAllCpu() {
+function getAll(fields, query) {
     return __awaiter(this, void 0, void 0, function* () {
-        const cpus = yield prisma.cpu.findMany({
-            select: {
-                id: true,
-                name: true,
-                baseSpeed: true,
-                maxSpeed: true,
-                cores: true,
-                price: true,
-                benchmark: true,
-            },
-        });
-        return cpus;
+        try {
+            const cpus = yield prisma.cpu.findMany({
+                select: fields,
+                where: query,
+            });
+            return cpus;
+        }
+        catch (err) {
+            throw err;
+        }
     });
 }
-exports.getAllCpu = getAllCpu;
-function getOnecpu(cpuId) {
+exports.getAll = getAll;
+function count() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const count = yield prisma.cpu.count();
+            return count;
+        }
+        catch (err) {
+            throw err;
+        }
+    });
+}
+exports.count = count;
+function getOne(cpuId, fields) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const cpu = yield prisma.cpu.findFirst({
-                select: {
-                    id: true,
-                    name: true,
-                    price: true,
-                    baseSpeed: true,
-                    maxSpeed: true,
-                    cores: true,
-                    threads: true,
-                    benchmark: true,
-                    createdAt: true,
-                },
+                select: fields,
                 where: {
                     id: cpuId,
                 },
@@ -55,46 +55,5 @@ function getOnecpu(cpuId) {
         }
     });
 }
-exports.getOnecpu = getOnecpu;
-function createCpu(data) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const cpu = yield prisma.cpu.create({
-                data,
-            });
-            return cpu;
-        }
-        catch (err) {
-            throw err;
-        }
-    });
-}
-exports.createCpu = createCpu;
-function updateCpu(cpuId, data) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const cpu = yield prisma.cpu.update({
-                data: data,
-                where: { id: cpuId },
-            });
-            return cpu;
-        }
-        catch (err) {
-            throw err;
-        }
-    });
-}
-exports.updateCpu = updateCpu;
-function deleteCpu(cpuId) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            yield prisma.laptop.deleteMany({ where: { cpuId } });
-            yield prisma.cpu.delete({ where: { id: cpuId } });
-        }
-        catch (err) {
-            throw err;
-        }
-    });
-}
-exports.deleteCpu = deleteCpu;
+exports.getOne = getOne;
 //# sourceMappingURL=cpuRepository.js.map

@@ -52,7 +52,7 @@ export async function uploadLaptopMediaValidation(
     const files = req.files as MulterFiles;
     const thumbRequest = files?.["thumb"];
     const videosRequest = files?.["videos"];
-    const galleriesRequest = files?.["galleries"];
+    const galleryRequest = files?.["gallery"];
 
     if (thumbRequest) {
       if (thumbRequest.length > 1) {
@@ -61,13 +61,15 @@ export async function uploadLaptopMediaValidation(
       const thumb = thumbRequest[0];
       await imagekit.isValidImages(thumb);
     }
-    if (galleriesRequest) {
-      if (galleriesRequest.length > 10) {
+
+    if (galleryRequest) {
+      if (galleryRequest.length > 10) {
         throw new MulterError("LIMIT_FIELD_COUNT", "gallery");
       }
-      const galleries = galleriesRequest;
-      await imagekit.bulkIsValidImages(galleries);
+      const gallery = galleryRequest;
+      await imagekit.bulkIsValidImages(gallery);
     }
+
     if (videosRequest) {
       if (videosRequest.length > 1) {
         throw new MulterError("LIMIT_FIELD_COUNT", "videos");
@@ -75,6 +77,7 @@ export async function uploadLaptopMediaValidation(
       const videos = videosRequest[0];
       await imagekit.isValidVideos(videos);
     }
+
     next();
   } catch (err) {
     const error = err as Error;

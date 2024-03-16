@@ -1,20 +1,59 @@
 import { v4 as uuid } from "uuid";
 import { Prisma } from "@prisma/client";
-import * as Application from "@repository/applicationRepository";
-import { SendError } from "../utils/apiError";
-import {
-  CreateAppRequestBody,
-  UpdateAppRequestBody,
-} from "../models/application";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import * as Application from "@repository/applicationRepository";
+import { SendError } from "@utils/apiError";
+import { AppGetAllQuery, AppRequestBody } from "@models/application";
+import { GetAllApp, CreatedOneApp, UpdatedOneApp } from "@models/application";
 
-type CreatedOneApp = Prisma.PromiseReturnType<typeof Application.createOne>;
-type UpdatedOneApp = Prisma.PromiseReturnType<typeof Application.updateOne>;
-
-export async function getAllApp() {
+export async function getAllApp(options: AppGetAllQuery): Promise<{
+  data: GetAllApp;
+  dataCount: number;
+  totalCount: number;
+}> {
   try {
-    const data = await Application.getAll();
-    return data;
+    const pagination: { skip?: number; take?: number } = {};
+    const appOption: Prisma.ApplicationWhereInput = {};
+    const totalCount = await Application.count();
+
+    const fields: Prisma.ApplicationSelect = {
+      id: true,
+      name: true,
+      headerImage: true,
+      price: true,
+      linux: true,
+      mac: true,
+      windows: true,
+      categories: {
+        select: {
+          category: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    };
+
+    if (options.name) {
+      appOption.name = {
+        contains: options.name,
+        mode: "insensitive",
+      };
+    }
+
+    if (options.page && options.size) {
+      pagination.take = Number(options.size);
+      pagination.skip = (Number(options.page) - 1) * Number(options.size);
+    }
+
+    const data = await Application.getAll(fields, pagination, appOption);
+
+    return {
+      data,
+      dataCount: data.length,
+      totalCount,
+    };
   } catch (err) {
     const error = err as Error;
     throw new SendError(error.message, 500);
@@ -34,7 +73,68 @@ export async function getOneMediaAttributesApp(appId: string) {
 }
 
 export async function getOneApp(id: string) {
-  const data = await Application.getOne(id);
+  const fields: Prisma.ApplicationSelect = {
+    id: true,
+    name: true,
+    price: true,
+    minCpuSpeed: true,
+    minCores: true,
+    minGpuBoostClock: true,
+    minGpuMemory: true,
+    minDirectX: true,
+    minOpenGl: true,
+    minRam: true,
+    minStorage: true,
+    link: true,
+    headerImage: true,
+    screenshots: true,
+    movies: true,
+    description: true,
+    developers: true,
+    publishers: true,
+    linux: true,
+    mac: true,
+    windows: true,
+    releaseDate: true,
+    website: true,
+    minOs: {
+      select: {
+        id: true,
+        name: true,
+      },
+    },
+    categories: {
+      select: {
+        category: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    },
+    genres: {
+      select: {
+        genre: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    },
+    tags: {
+      select: {
+        tag: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    },
+  };
+  const data = await Application.getOne(id, fields);
   if (!data) {
     throw new SendError("application not found", 404);
   }
@@ -50,18 +150,28 @@ export async function isExists(id: string) {
 }
 
 export async function createOneApp(
-  app: CreateAppRequestBody
+  app: AppRequestBody
 ): Promise<CreatedOneApp> {
   try {
     const appId = uuid();
 
-    const data: Prisma.ApplicationUncheckedCreateInput = {
-      ...app,
+    const data: Prisma.ApplicationCreateInput = {
       id: appId,
-      price: Number(app?.price) || 0,
-      windows: JSON.parse(String(app.windows)),
-      linux: JSON.parse(String(app.linux)),
-      mac: JSON.parse(String(app.mac)),
+      admin: {
+        connect: {
+          id: app.adminId,
+        },
+      },
+      minOs: {
+        connect: {
+          id: app.windId,
+        },
+      },
+      headerImageId: app.headerImageId,
+      moviesId: app.moviesId,
+      screenshotsId: app.screenshotsId,
+      name: app.name,
+      description: app.description,
       minCpuSpeed: Number(app.minCpuSpeed),
       minCores: Number(app.minCores),
       minGpuBoostClock: Number(app.minGpuBoostClock),
@@ -71,6 +181,18 @@ export async function createOneApp(
       minRam: Number(app.minRam),
       minStorage: Number(app.minStorage),
       bitOs: Number(app.bitOs),
+      price: Number(app?.price) || 0,
+      headerImage: app.headerImage,
+      movies: app.movies,
+      screenshots: app.screenshots,
+      link: app.link,
+      website: app.website,
+      developers: app.developers,
+      publishers: app.publishers,
+      releaseDate: app.releaseDate,
+      windows: JSON.parse(String(app.windows)),
+      linux: JSON.parse(String(app.linux)),
+      mac: JSON.parse(String(app.mac)),
     };
 
     const createdApp: CreatedOneApp = await Application.createOne(data);
@@ -86,15 +208,25 @@ export async function createOneApp(
 }
 export async function updateOneApp(
   appId: string,
-  app: UpdateAppRequestBody
+  app: AppRequestBody
 ): Promise<UpdatedOneApp> {
   try {
-    const data: Prisma.ApplicationUncheckedUpdateInput = {
-      ...app,
-      price: Number(app?.price) || 0,
-      windows: JSON.parse(String(app.windows)),
-      linux: JSON.parse(String(app.linux)),
-      mac: JSON.parse(String(app.mac)),
+    const data: Prisma.ApplicationUpdateInput = {
+      admin: {
+        connect: {
+          id: app.adminId,
+        },
+      },
+      minOs: {
+        connect: {
+          id: app.windId,
+        },
+      },
+      headerImageId: app.headerImageId,
+      moviesId: app.moviesId,
+      screenshotsId: app.screenshotsId,
+      name: app.name,
+      description: app.description,
       minCpuSpeed: Number(app.minCpuSpeed),
       minCores: Number(app.minCores),
       minGpuBoostClock: Number(app.minGpuBoostClock),
@@ -104,6 +236,18 @@ export async function updateOneApp(
       minRam: Number(app.minRam),
       minStorage: Number(app.minStorage),
       bitOs: Number(app.bitOs),
+      price: Number(app?.price) || 0,
+      headerImage: app.headerImage,
+      movies: app.movies,
+      screenshots: app.screenshots,
+      link: app.link,
+      website: app.website,
+      developers: app.developers,
+      publishers: app.publishers,
+      releaseDate: app.releaseDate,
+      windows: JSON.parse(String(app.windows)),
+      linux: JSON.parse(String(app.linux)),
+      mac: JSON.parse(String(app.mac)),
     };
 
     const updatedApp: UpdatedOneApp = await Application.updateOne(appId, data);

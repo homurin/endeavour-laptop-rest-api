@@ -1,7 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import { SendError } from "../utils/apiError";
-import * as laptopService from "@services/laptopService";
-import * as appService from "@services/applicationService";
+import { getOneLaptop } from "@services/laptopService";
+import { getOneApp } from "@services/applicationService";
+import { getOneCpu } from "@services/cpuService";
+import { getOneGpu } from "../services/gpuService";
+import { getOneWindows } from "../services/windowsService";
 
 export async function laptopIdCheck(
   req: Request,
@@ -12,10 +15,13 @@ export async function laptopIdCheck(
     if (!req?.params?.id) {
       return next(new SendError("id is required", 400));
     }
-    const isExists = await laptopService.getOneLaptop(req.params.id);
+
+    const isExists = await getOneLaptop(req.params.id);
+
     if (!isExists) {
       return next(new SendError("laptop not found", 404));
     }
+
     next();
   } catch (err) {
     next(new SendError("failed id check process", 500));
@@ -30,9 +36,68 @@ export async function appIdCheck(
     if (!req?.params?.id) {
       return next(new SendError("id is required", 400));
     }
-    const isExists = await appService.isExists(req.params.id);
+
+    const isExists = await getOneApp(req.params.id);
+
     if (!isExists) {
       next(new SendError("application not found", 404));
+    }
+
+    next();
+  } catch (err) {
+    next(new SendError("failed id check process", 500));
+  }
+}
+
+export async function cpuIdCheck(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    if (!req?.params?.id) {
+      return next(new SendError("id is required", 400));
+    }
+    const isExists = await getOneCpu(req.params.id);
+    if (!isExists) {
+      next(new SendError("cpu not found", 404));
+    }
+    next();
+  } catch (err) {
+    next(new SendError("failed id check process", 500));
+  }
+}
+export async function gpuIdCheck(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    if (!req?.params?.id) {
+      return next(new SendError("id is required", 400));
+    }
+    const isExists = await getOneGpu(req.params.id);
+    if (!isExists) {
+      next(new SendError("gpu not found", 404));
+    }
+    next();
+  } catch (err) {
+    next(new SendError("failed id check process", 500));
+  }
+}
+
+export async function windowsIdCheck(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    if (!req?.params?.id) {
+      return next(new SendError("id is required", 400));
+    }
+    const isExists = await getOneWindows(req.params.id);
+    if (!isExists) {
+      next(new SendError("windows version not found", 404));
     }
     next();
   } catch (err) {

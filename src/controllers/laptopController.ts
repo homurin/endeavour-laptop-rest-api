@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { SendError } from "@utils/apiError";
 import * as laptopService from "@services/laptopService";
-import { LaptopGetAllQuery, LaptopRequestBody } from "../models/laptop";
+import { LaptopGetAllQuery, LaptopRequestBody } from "@models/laptop";
 
 export async function getAllLaptop(
   req: Request,
@@ -18,8 +18,11 @@ export async function getAllLaptop(
     const laptops = await laptopService.getAllLaptop(query);
     res.status(200).json({
       message: "success",
-      total: laptops.count,
-      showed: laptops.showedLength,
+      metadata: {
+        total_page: Math.ceil(laptops.totalCount / laptops.dataCount),
+        total_count: laptops.totalCount,
+        limit: laptops.dataCount,
+      },
       laptops: laptops.data,
     });
   } catch (err) {
@@ -109,6 +112,21 @@ export async function deleteOneLaptop(
     await laptopService.deleteOneLaptop(id);
     res.status(200).json({
       message: `record has been successfull deleted`,
+    });
+  } catch (err) {
+    next(new SendError("internal server error", 500));
+  }
+}
+
+export async function getRecommendation(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    res.status(200).json({
+      message: "success",
+      laptops: [],
     });
   } catch (err) {
     next(new SendError("internal server error", 500));

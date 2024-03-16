@@ -9,21 +9,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteOne = exports.updateOne = exports.createOne = exports.getOne = exports.getOneMediaAttributes = exports.getAll = void 0;
+exports.deleteOne = exports.updateOne = exports.createOne = exports.getOne = exports.getOneMediaAttributes = exports.getAll = exports.count = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
-function getAll() {
+function count() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const count = yield prisma.application.count();
+        return count;
+    });
+}
+exports.count = count;
+function getAll(fields, pagination, option) {
     return __awaiter(this, void 0, void 0, function* () {
         const applications = yield prisma.application.findMany({
-            select: {
-                id: true,
-                name: true,
-                headerImage: true,
-                price: true,
-                linux: true,
-                mac: true,
-                windows: true,
-            },
+            select: fields,
+            where: option,
+            skip: pagination.skip,
+            take: pagination.take,
         });
         return applications;
     });
@@ -51,71 +53,11 @@ function getOneMediaAttributes(id) {
     });
 }
 exports.getOneMediaAttributes = getOneMediaAttributes;
-function getOne(applicationId) {
+function getOne(applicationId, fields) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const application = yield prisma.application.findFirst({
-                select: {
-                    id: true,
-                    name: true,
-                    price: true,
-                    minCpuSpeed: true,
-                    minCores: true,
-                    minGpuBoostClock: true,
-                    minGpuMemory: true,
-                    minDirectX: true,
-                    minOpenGl: true,
-                    minRam: true,
-                    minStorage: true,
-                    link: true,
-                    headerImage: true,
-                    screenshots: true,
-                    movies: true,
-                    description: true,
-                    developers: true,
-                    publishers: true,
-                    linux: true,
-                    mac: true,
-                    windows: true,
-                    releaseDate: true,
-                    website: true,
-                    minOs: {
-                        select: {
-                            id: true,
-                            name: true,
-                        },
-                    },
-                    categories: {
-                        select: {
-                            category: {
-                                select: {
-                                    id: true,
-                                    name: true,
-                                },
-                            },
-                        },
-                    },
-                    genres: {
-                        select: {
-                            genre: {
-                                select: {
-                                    id: true,
-                                    name: true,
-                                },
-                            },
-                        },
-                    },
-                    tags: {
-                        select: {
-                            tag: {
-                                select: {
-                                    id: true,
-                                    name: true,
-                                },
-                            },
-                        },
-                    },
-                },
+                select: fields,
                 where: {
                     id: applicationId,
                 },
@@ -133,6 +75,10 @@ function createOne(data) {
         try {
             const application = yield prisma.application.create({
                 data,
+                include: {
+                    admin: true,
+                    minOs: true,
+                },
             });
             return application;
         }
@@ -148,6 +94,10 @@ function updateOne(applicationId, data) {
             const application = yield prisma.application.update({
                 where: { id: applicationId },
                 data,
+                include: {
+                    admin: true,
+                    minOs: true,
+                },
             });
             return application;
         }

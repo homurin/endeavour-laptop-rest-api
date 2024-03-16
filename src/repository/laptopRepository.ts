@@ -6,14 +6,12 @@ const prisma = new PrismaClient();
 export async function getAll(
   field: Prisma.LaptopSelect,
   pagination: { skip?: number; take?: number },
-  option?: Prisma.LaptopWhereInput,
-  orderByOption?: Prisma.LaptopOrderByWithRelationInput
+  option?: Prisma.LaptopWhereInput
 ) {
   try {
     const laptops = await prisma.laptop.findMany({
       select: field,
       where: option,
-      orderBy: orderByOption,
       skip: pagination.skip,
       take: pagination.take,
     });

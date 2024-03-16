@@ -1,11 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { SendError } from "@utils/apiError";
-import { Prisma } from "@prisma/client";
-import {
-  CreateAppRequestBody,
-  UpdateAppRequestBody,
-} from "@models/application";
+import { AppGetAllQuery, AppRequestBody } from "@models/application";
 import * as applicationService from "@services/applicationService";
 
 export async function getAllApp(
@@ -14,10 +9,17 @@ export async function getAllApp(
   next: NextFunction
 ): Promise<void> {
   try {
-    const apps = await applicationService.getAllApp();
+    const options = req.query as AppGetAllQuery;
+    const apps = await applicationService.getAllApp(options);
+
     res.status(200).json({
       message: "success",
-      apps,
+      metadata: {
+        total_page: Math.ceil(apps.totalCount / apps.dataCount),
+        total_count: apps.totalCount,
+        limit: apps.dataCount,
+      },
+      apps: apps.data,
     });
   } catch (err) {
     next(new SendError("internal server error", 500));
@@ -31,9 +33,11 @@ export async function getOneApp(
 ): Promise<void> {
   try {
     const id: string = req.params.id;
+
     if (!id) {
       return next(new SendError("id cannot be null", 400));
     }
+
     const app = await applicationService.getOneApp(id);
 
     res.status(200).json({
@@ -56,14 +60,16 @@ export async function createOneApp(
   next: NextFunction
 ): Promise<void> {
   try {
-    const app = req.body as CreateAppRequestBody;
+    const app = req.body as AppRequestBody;
+
     if (req.user) {
       app.adminId = req.user.id;
     }
-    const createdapp = await applicationService.createOneApp(app);
+
+    const createdApp = await applicationService.createOneApp(app);
     res.status(201).json({
       message: "success",
-      app: createdapp,
+      app: createdApp,
     });
   } catch (err) {
     const error = err as Error;
@@ -81,13 +87,13 @@ export async function updateOneApp(
 ): Promise<void> {
   try {
     const id = req.params.id;
-    const app = req.body as UpdateAppRequestBody;
+    const app = req.body as AppRequestBody;
 
     if (req.user) {
       app.adminId = req.user.id;
     }
     const createdapp = await applicationService.updateOneApp(id, app);
-    res.status(201).json({
+    res.status(200).json({
       message: "success",
       app: createdapp,
     });

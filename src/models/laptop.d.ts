@@ -36,11 +36,9 @@ type GalleriesRequestBody = {
 };
 
 export interface LaptopGetAllQuery {
-  page?: string;
-  show?: string;
   name?: string;
-  price?: number;
-  priceOrder?: string;
+  page?: string;
+  size?: string;
 }
 
 export type GetAllLaptop = Prisma.PromiseReturnType<typeof Laptop.getAll>;

@@ -33,16 +33,17 @@ const imagekitValidation_1 = require("../middlewares/imagekitValidation");
 const router = (0, express_1.Router)();
 router.get("/", laptops.getAllLaptop);
 router.post("/", authMe_1.authMe, multer_1.imagesVideos.fields([
-    { name: "thumb", maxCount: 1 },
-    { name: "videos", maxCount: 1 },
-    { name: "gallery", maxCount: 10 },
+    { name: "thumb" },
+    { name: "videos" },
+    { name: "gallery" },
 ]), imagekitValidation_1.uploadLaptopMediaValidation, imagekitUpload_1.uploadLaptopMedia, laptops.createOneLaptop);
 router.get("/:id", laptops.getOneLaptop);
 router.patch("/:id", authMe_1.authMe, idCheck_1.laptopIdCheck, multer_1.imagesVideos.fields([
-    { name: "thumb", maxCount: 1 },
-    { name: "videos", maxCount: 1 },
-    { name: "gallery", maxCount: 10 },
+    { name: "thumb" },
+    { name: "videos" },
+    { name: "gallery" },
 ]), imagekitValidation_1.uploadLaptopMediaValidation, imagekitUpload_1.updateUploadLaptopMedia, laptops.updateOneLaptop);
 router.delete("/:id", idCheck_1.laptopIdCheck, laptops.deleteOneLaptop);
+router.post("/recommendation");
 exports.default = router;
 //# sourceMappingURL=laptopRouter.js.map

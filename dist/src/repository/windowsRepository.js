@@ -9,47 +9,34 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteOne = exports.updateOne = exports.createOne = exports.getOne = exports.getAll = void 0;
+exports.count = exports.getOne = exports.getAll = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
-function getAll() {
+function getAll(fields, query) {
     return __awaiter(this, void 0, void 0, function* () {
-        const cpus = yield prisma.windows.findMany({
-            select: {
-                id: true,
-                name: true,
-                version: true,
-                buildNumber: true,
-                releaseDate: true,
-            },
-        });
-        return cpus;
+        try {
+            const windows = yield prisma.windows.findMany({
+                select: fields,
+                where: query,
+            });
+            return windows;
+        }
+        catch (err) {
+            throw err;
+        }
     });
 }
 exports.getAll = getAll;
-function getOne(cpuId) {
+function getOne(windowsId, fields) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const cpu = yield prisma.windows.findFirst({
-                select: {
-                    id: true,
-                    name: true,
-                    buildNumber: true,
-                    releaseDate: true,
-                    version: true,
-                    createdAt: true,
-                    updatedAt: true,
-                    admin: {
-                        select: {
-                            fullName: true,
-                        },
-                    },
-                },
+            const windows = yield prisma.windows.findFirst({
+                select: fields,
                 where: {
-                    id: cpuId,
+                    id: windowsId,
                 },
             });
-            return cpu;
+            return windows;
         }
         catch (err) {
             throw err;
@@ -57,45 +44,16 @@ function getOne(cpuId) {
     });
 }
 exports.getOne = getOne;
-function createOne(data) {
+function count() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const cpu = yield prisma.cpu.create({
-                data,
-            });
-            return cpu;
+            const count = yield prisma.windows.count();
+            return count;
         }
         catch (err) {
             throw err;
         }
     });
 }
-exports.createOne = createOne;
-function updateOne(cpuId, data) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const cpu = yield prisma.cpu.update({
-                data: data,
-                where: { id: cpuId },
-            });
-            return cpu;
-        }
-        catch (err) {
-            throw err;
-        }
-    });
-}
-exports.updateOne = updateOne;
-function deleteOne(cpuId) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            yield prisma.laptop.deleteMany({ where: { cpuId } });
-            yield prisma.cpu.delete({ where: { id: cpuId } });
-        }
-        catch (err) {
-            throw err;
-        }
-    });
-}
-exports.deleteOne = deleteOne;
+exports.count = count;
 //# sourceMappingURL=windowsRepository.js.map

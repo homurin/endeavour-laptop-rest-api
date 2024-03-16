@@ -17,9 +17,9 @@ router.post(
   "/",
   authMe,
   imagesVideos.fields([
-    { name: "thumb", maxCount: 1 },
-    { name: "videos", maxCount: 1 },
-    { name: "gallery", maxCount: 10 },
+    { name: "thumb" },
+    { name: "videos" },
+    { name: "gallery" },
   ]),
   uploadLaptopMediaValidation,
   uploadLaptopMedia,
@@ -32,9 +32,9 @@ router.patch(
   authMe,
   laptopIdCheck,
   imagesVideos.fields([
-    { name: "thumb", maxCount: 1 },
-    { name: "videos", maxCount: 1 },
-    { name: "gallery", maxCount: 10 },
+    { name: "thumb" },
+    { name: "videos" },
+    { name: "gallery" },
   ]),
   uploadLaptopMediaValidation,
   updateUploadLaptopMedia,
@@ -42,5 +42,7 @@ router.patch(
 );
 
 router.delete("/:id", laptopIdCheck, laptops.deleteOneLaptop);
+
+router.post("/recommendation", laptops.getRecommendation);
 
 export default router;
