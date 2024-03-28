@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 import * as Gpu from "@repository/gpuRepository";
-import { GpuGetAll, GpuGetAllQuery, GpuGetOne } from "../models/gpu";
+import { GpuGetAll, GpuGetAllQuery, GpuGetOne } from "../types/gpu";
 
 export async function getAllGpu(query?: GpuGetAllQuery): Promise<{
   data: GpuGetAll;

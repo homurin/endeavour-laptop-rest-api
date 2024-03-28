@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import * as cpuService from "@services/cpuService";
 import { SendError } from "../utils/apiError";
-import { CpuGetAllQuery } from "../models/cpu";
+import { CpuGetAllQuery } from "../types/cpu";
 
 export async function getAllCpu(
   req: Request,

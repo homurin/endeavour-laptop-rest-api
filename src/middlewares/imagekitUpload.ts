@@ -4,9 +4,9 @@ import * as imagekit from "@libs/imagekit";
 import { SendError } from "@utils/apiError";
 import * as Laptop from "@repository/laptopRepository";
 import * as applicationService from "@services/applicationService";
-import { AppRequestBody } from "@models/application";
-import MulterFiles from "@models/multer";
-import { LaptopRequestBody } from "@models/laptop";
+import { AppRequestBody } from "@/src/types/application";
+import MulterFiles from "@/src/types/multer";
+import { LaptopRequestBody } from "@/src/types/laptop";
 
 export async function uploadLaptopMedia(
   req: Request,

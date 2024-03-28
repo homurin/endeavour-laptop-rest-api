@@ -1,17 +1,48 @@
 import { Gallery, Laptop, Prisma, PrismaClient } from "@prisma/client";
-import { LaptopRequestBody } from "../models/laptop";
 
 const prisma = new PrismaClient();
+
+export async function getRandom() {
+  try {
+    const laptopCount = await prisma.laptop.count();
+    const randomIndex = Math.floor(Math.random() * laptopCount);
+    const randomLaptop = await prisma.laptop.findMany({
+      take: 1,
+      skip: randomIndex,
+      select: {
+        id: true,
+        name: true,
+        cpu: {
+          select: { name: true },
+        },
+        gpu: {
+          select: { name: true },
+        },
+        price: true,
+        videos: true,
+        thumb: true,
+        ram: true,
+        ssdStorage: true,
+        hddStorage: true,
+      },
+    });
+    return randomLaptop;
+  } catch (err) {
+    throw err;
+  }
+}
 
 export async function getAll(
   field: Prisma.LaptopSelect,
   pagination: { skip?: number; take?: number },
-  option?: Prisma.LaptopWhereInput
+  option?: Prisma.LaptopWhereInput,
+  orderBy?: Prisma.LaptopOrderByWithRelationInput
 ) {
   try {
     const laptops = await prisma.laptop.findMany({
       select: field,
       where: option,
+      orderBy,
       skip: pagination.skip,
       take: pagination.take,
     });

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { SendError } from "@utils/apiError";
-import { AppGetAllQuery, AppRequestBody } from "@models/application";
+import { AppGetAllQuery, AppRequestBody } from "@/src/types/application";
 import * as applicationService from "@services/applicationService";
 
 export async function getAllApp(

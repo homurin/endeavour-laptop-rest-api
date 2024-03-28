@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, response } from "express";
 import { SendError } from "@utils/apiError";
 import * as laptopService from "@services/laptopService";
-import { LaptopGetAllQuery, LaptopRequestBody } from "@models/laptop";
+import { LaptopGetAllQuery, LaptopRequestBody } from "@/src/types/laptop";
 
 export async function getAllLaptop(
   req: Request,
@@ -16,12 +16,19 @@ export async function getAllLaptop(
     }
 
     const laptops = await laptopService.getAllLaptop(query);
+    const getRandomLaptop = await laptopService.getRandomLaptop();
+    const randomLaptop = getRandomLaptop[0];
+    const totalStorage = randomLaptop.ssdStorage + randomLaptop.hddStorage;
     res.status(200).json({
       message: "success",
       metadata: {
+        limit: laptops.dataCount,
         total_page: Math.ceil(laptops.totalCount / laptops.dataCount),
         total_count: laptops.totalCount,
-        limit: laptops.dataCount,
+      },
+      randomLaptop: {
+        ...randomLaptop,
+        totalStorage,
       },
       laptops: laptops.data,
     });

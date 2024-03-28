@@ -13,9 +13,11 @@ export default async function main() {
       (app: any) => {
         delete app.minThreads;
         return {
+          ...app,
           id: app.id,
           adminId: admin.id,
-          ...app,
+          price: Number(app.price * 15870.35),
+          minGpuMemory: app.minGpuMemory / 1000,
         };
       }
     );

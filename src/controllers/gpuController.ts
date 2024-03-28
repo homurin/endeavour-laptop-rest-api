@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import * as gpuService from "@services/gpuService";
 import { SendError } from "../utils/apiError";
-import { GpuGetAllQuery } from "@models/gpu";
+import { GpuGetAllQuery } from "@/src/types/gpu";
 
 export async function getAllCpu(
   req: Request,

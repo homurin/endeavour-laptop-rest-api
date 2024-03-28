@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import * as windowsService from "@services/windowsService";
 import { SendError } from "@utils/apiError";
-import { WindowsGetAllQuery } from "@models/windows";
+import { WindowsGetAllQuery } from "@/src/types/windows";
 
 export async function getAllWindows(
   req: Request,

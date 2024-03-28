@@ -9,14 +9,15 @@ export default async function main() {
     const laptopsBuffer = await readFile(__dirname + "/data/laptops.json");
     const laptops = JSON.parse(laptopsBuffer.toString()).map((lap: any) => {
       return {
+        ...lap,
         id: lap.id,
         adminId: admin.id,
-        ...lap,
+        price: Number(lap.price * 15870.35),
       };
     });
 
     await prisma.laptop.createMany({ data: laptops });
-    console.info("success seeding laptops");
+    console.info("laptops seeding success");
   } catch (err: any) {
     console.error(err);
     throw new Error(err);

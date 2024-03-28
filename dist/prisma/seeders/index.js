@@ -27,6 +27,7 @@ const tags_1 = __importDefault(require("./tags"));
 const appsCategory_1 = __importDefault(require("./appsCategory"));
 const appsGenre_1 = __importDefault(require("./appsGenre"));
 const appsTag_1 = __importDefault(require("./appsTag"));
+const topApps_1 = __importDefault(require("./topApps"));
 const prisma = new client_1.PrismaClient();
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -38,6 +39,7 @@ function main() {
             yield (0, windows_1.default)();
             yield (0, laptops_1.default)();
             yield (0, laptopsGallery_1.default)();
+            yield (0, topApps_1.default)();
             yield (0, steamGames_1.default)();
             yield (0, categories_1.default)();
             yield (0, genres_1.default)();

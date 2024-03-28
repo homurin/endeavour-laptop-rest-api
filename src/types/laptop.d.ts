@@ -1,3 +1,6 @@
+import { Prisma } from "@prisma/client";
+import * as Laptop from "@repository/laptopRepository";
+
 export interface LaptopRequestBody {
   adminId: string;
   cpuId?: string;
@@ -37,6 +40,8 @@ type GalleriesRequestBody = {
 
 export interface LaptopGetAllQuery {
   name?: string;
+  sort_by?: string;
+  order_by?: Prisma.SortOrder;
   page?: string;
   size?: string;
 }

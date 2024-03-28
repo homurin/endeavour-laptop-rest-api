@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 import * as Cpu from "@repository/cpuRepository";
-import { CpuGetAll, CpuGetAllQuery, CpuGetOne } from "../models/cpu";
+import { CpuGetAll, CpuGetAllQuery, CpuGetOne } from "../types/cpu";
 
 export async function getAllCpu(query?: CpuGetAllQuery): Promise<{
   data: CpuGetAll;

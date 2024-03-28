@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { MulterError } from "multer";
 import * as imagekit from "@libs/imagekit";
 import { SendError } from "../utils/apiError";
-import MulterFiles from "../models/multer";
+import MulterFiles from "../types/multer";
 
 export async function uploadAppMediaValidation(
   req: Request,

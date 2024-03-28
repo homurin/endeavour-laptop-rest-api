@@ -4,7 +4,7 @@ import {
   WindowsGetAllQuery,
   WindowsGetAll,
   WindowsGetOne,
-} from "@models/windows";
+} from "@/src/types/windows";
 
 export async function getAllWindows(query?: WindowsGetAllQuery): Promise<{
   data: WindowsGetAll;

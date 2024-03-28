@@ -13,6 +13,7 @@ import tags from "./tags";
 import appsCategory from "./appsCategory";
 import appsGenre from "./appsGenre";
 import appsTag from "./appsTag";
+import topApps from "./topApps";
 
 const prisma = new PrismaClient();
 
@@ -25,6 +26,7 @@ async function main() {
     await windows();
     await laptops();
     await laptopGallery();
+    await topApps();
     await steamGames();
     await categories();
     await genres();

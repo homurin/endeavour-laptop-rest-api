@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { JsonWebTokenError } from "jsonwebtoken";
 import { SendError } from "../utils/apiError";
 import { verifyToken } from "../libs/jwt";
-import { AdminProfile } from "@models/admin";
+import { AdminProfile } from "@/src/types/admin";
 import { isAdminExists } from "../services/adminService";
 
 export async function authMe(req: Request, res: Response, next: NextFunction) {

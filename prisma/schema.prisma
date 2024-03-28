@@ -165,10 +165,10 @@ model Application {
   headerImageId    String?                    @db.VarChar(36)
   screenshotsId    String?                    @db.VarChar(36)
   moviesId         String?                    @db.VarChar(36)
-  price            Decimal?                    @default(0) @db.Money()
+  price            Decimal?                   @default(0) @db.Money()
   description      String?                    @db.Text
-  website          String?                    @db.VarChar(255)
-  link             String?                    @db.VarChar(255)
+  website          String?                    @db.Text
+  link             String?                    @db.Text
   developers       String?                    @db.VarChar(255)
   publishers       String?                    @db.VarChar(255)
   headerImage      String?                    @db.Text
@@ -192,6 +192,8 @@ model Application {
   genres           GenresOnApplications[]
   categories       CategoriesOnApplications[]
   tags             TagsOnApplications[]
+  createdAt        DateTime                   @default(now())
+  updatedAt        DateTime                   @updatedAt
 }
 
 model Genre {
@@ -240,7 +242,7 @@ model TagsOnApplications {
   appId        String      @db.VarChar(36)
   tagId        String      @db.VarChar(36)
   applications Application @relation(fields: [appId], references: [id])
-  tag         Tag         @relation(fields: [tagId], references: [id])
+  tag          Tag         @relation(fields: [tagId], references: [id])
 
   @@id([appId, tagId])
 }

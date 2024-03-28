@@ -3,8 +3,12 @@ import { Prisma } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import * as Application from "@repository/applicationRepository";
 import { SendError } from "@utils/apiError";
-import { AppGetAllQuery, AppRequestBody } from "@models/application";
-import { GetAllApp, CreatedOneApp, UpdatedOneApp } from "@models/application";
+import { AppGetAllQuery, AppRequestBody } from "@/src/types/application";
+import {
+  GetAllApp,
+  CreatedOneApp,
+  UpdatedOneApp,
+} from "@/src/types/application";
 
 export async function getAllApp(options: AppGetAllQuery): Promise<{
   data: GetAllApp;
@@ -12,8 +16,9 @@ export async function getAllApp(options: AppGetAllQuery): Promise<{
   totalCount: number;
 }> {
   try {
-    const pagination: { skip?: number; take?: number } = {};
+    const pagination: { skip?: number; take?: number } = { skip: 0, take: 30 };
     const appOption: Prisma.ApplicationWhereInput = {};
+
     const totalCount = await Application.count();
 
     const fields: Prisma.ApplicationSelect = {

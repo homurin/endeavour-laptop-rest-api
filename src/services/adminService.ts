@@ -1,5 +1,5 @@
 import * as Admin from "@repository/adminRepository";
-import { AdminProfile } from "@models/admin";
+import { AdminProfile } from "@/src/types/admin";
 import { comparePassword } from "@libs/bcrypt";
 import * as jwt from "@libs/jwt";
 import { SendError } from "../utils/apiError";

@@ -5,11 +5,20 @@ import {
   GetOneLaptop,
   UpdateOneLaptop,
   CreateOneLaptop,
-} from "../models/laptop";
+} from "../types/laptop";
 import { v4 as uuid } from "uuid";
 import { PrismaClientValidationError } from "@prisma/client/runtime/library";
 import { SendError } from "../utils/apiError";
-import { LaptopRequestBody, LaptopGetAllQuery } from "@models/laptop";
+import { LaptopRequestBody, LaptopGetAllQuery } from "@/src/types/laptop";
+
+export async function getRandomLaptop() {
+  try {
+    const randomVideos = await Laptop.getRandom();
+    return randomVideos;
+  } catch (err) {
+    throw err;
+  }
+}
 
 export async function getAllLaptop(
   options?: LaptopGetAllQuery
@@ -29,24 +38,46 @@ export async function getAllLaptop(
         select: {
           name: true,
           baseSpeed: true,
+          maxSpeed: true,
         },
       },
       gpu: {
         select: {
           name: true,
+          maxSpeed: true,
         },
       },
     };
     const laptopQuery: Prisma.LaptopWhereInput = {};
-    const pagination: { skip?: number; take?: number } = {};
+    const pagination: { skip?: number; take?: number } = { skip: 0, take: 30 };
+    const orderBy: Prisma.LaptopOrderByWithRelationInput = {};
     const totalCount = await Laptop.count();
 
     if (options?.name) {
-      console.info(options);
       laptopQuery.name = {
         contains: options.name,
         mode: "insensitive",
       };
+    }
+
+    if (options?.sort_by === "ram" && options.order_by) {
+      orderBy.ram = options.order_by;
+    }
+
+    if (options?.sort_by === "price" && options.order_by) {
+      orderBy.price = options.order_by;
+    }
+
+    if (options?.sort_by === "cpu_speed" && options.order_by) {
+      orderBy.cpu = { maxSpeed: options.order_by };
+    }
+
+    if (options?.sort_by === "gpu_speed" && options.order_by) {
+      orderBy.gpu = { maxSpeed: options.order_by };
+    }
+
+    if (options?.sort_by === "ssd_storage" && options.order_by) {
+      orderBy.ssdStorage = options.order_by;
     }
 
     if (options?.page && options?.size) {
@@ -57,7 +88,8 @@ export async function getAllLaptop(
     const data: GetAllLaptop = await Laptop.getAll(
       laptopsSelect,
       pagination,
-      laptopQuery
+      laptopQuery,
+      orderBy
     );
 
     return {

@@ -44,6 +44,6 @@ router.patch("/:id", authMe_1.authMe, idCheck_1.laptopIdCheck, multer_1.imagesVi
     { name: "gallery" },
 ]), imagekitValidation_1.uploadLaptopMediaValidation, imagekitUpload_1.updateUploadLaptopMedia, laptops.updateOneLaptop);
 router.delete("/:id", idCheck_1.laptopIdCheck, laptops.deleteOneLaptop);
-router.post("/recommendation");
+router.post("/recommendation", laptops.getRecommendation);
 exports.default = router;
 //# sourceMappingURL=laptopRouter.js.map
