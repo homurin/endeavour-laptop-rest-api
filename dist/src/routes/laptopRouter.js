@@ -24,8 +24,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const laptops = __importStar(require("../controllers/laptopController"));
-const multer_1 = require("../middlewares/multer");
+const laptops = __importStar(require("@controllers/laptopController"));
+const multer_1 = require("@middlewares/multer");
 const imagekitUpload_1 = require("../middlewares/imagekitUpload");
 const idCheck_1 = require("../middlewares/idCheck");
 const authMe_1 = require("../middlewares/authMe");

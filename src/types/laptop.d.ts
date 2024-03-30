@@ -39,7 +39,7 @@ type GalleriesRequestBody = {
 };
 
 export interface LaptopGetAllQuery {
-  name?: string;
+  search?: string;
   sort_by?: string;
   order_by?: Prisma.SortOrder;
   page?: string;

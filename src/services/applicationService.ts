@@ -10,6 +10,15 @@ import {
   UpdatedOneApp,
 } from "@/src/types/application";
 
+export async function getRandomApps() {
+  try {
+    const randomApps = await Application.getRandom();
+    return randomApps;
+  } catch (err) {
+    throw err;
+  }
+}
+
 export async function getAllApp(options: AppGetAllQuery): Promise<{
   data: GetAllApp;
   dataCount: number;
@@ -18,6 +27,7 @@ export async function getAllApp(options: AppGetAllQuery): Promise<{
   try {
     const pagination: { skip?: number; take?: number } = { skip: 0, take: 30 };
     const appOption: Prisma.ApplicationWhereInput = {};
+    const orderBy: Prisma.ApplicationOrderByWithRelationInput = {};
 
     const totalCount = await Application.count();
 
@@ -40,11 +50,15 @@ export async function getAllApp(options: AppGetAllQuery): Promise<{
       },
     };
 
-    if (options.name) {
+    if (options.search) {
       appOption.name = {
-        contains: options.name,
+        contains: options.search,
         mode: "insensitive",
       };
+    }
+
+    if (options.sort_by === "created_at" && options.order_by) {
+      orderBy.createdAt = options.order_by;
     }
 
     if (options.page && options.size) {

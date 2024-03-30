@@ -9,15 +9,49 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteGallery = exports.bulkCreateGallery = exports.deleteOne = exports.updateOne = exports.createOne = exports.getOne = exports.getOneFullDesc = exports.count = exports.getAll = void 0;
+exports.deleteGallery = exports.bulkCreateGallery = exports.deleteOne = exports.updateOne = exports.createOne = exports.getOne = exports.getOneFullDesc = exports.count = exports.getAll = exports.getRandom = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
-function getAll(field, pagination, option) {
+function getRandom() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const laptopCount = yield prisma.laptop.count();
+            const randomIndex = Math.floor(Math.random() * laptopCount);
+            const randomLaptop = yield prisma.laptop.findMany({
+                take: 1,
+                skip: randomIndex,
+                select: {
+                    id: true,
+                    name: true,
+                    cpu: {
+                        select: { name: true },
+                    },
+                    gpu: {
+                        select: { name: true },
+                    },
+                    price: true,
+                    videos: true,
+                    thumb: true,
+                    ram: true,
+                    ssdStorage: true,
+                    hddStorage: true,
+                },
+            });
+            return randomLaptop;
+        }
+        catch (err) {
+            throw err;
+        }
+    });
+}
+exports.getRandom = getRandom;
+function getAll(field, pagination, option, orderBy) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const laptops = yield prisma.laptop.findMany({
                 select: field,
                 where: option,
+                orderBy,
                 skip: pagination.skip,
                 take: pagination.take,
             });

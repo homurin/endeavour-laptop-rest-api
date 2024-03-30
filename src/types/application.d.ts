@@ -33,9 +33,9 @@ export interface AppRequestBody {
 }
 
 export interface AppGetAllQuery {
-  name?: string;
-  sortBy?: string;
-  orderBy?: Prisma.SortOrder;
+  search?: string;
+  sort_by?: string;
+  order_by?: Prisma.SortOrder;
   page?: string;
   size?: string;
 }

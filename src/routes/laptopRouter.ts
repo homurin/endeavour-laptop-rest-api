@@ -12,6 +12,7 @@ import { uploadLaptopMediaValidation } from "../middlewares/imagekitValidation";
 const router = Router();
 
 router.get("/", laptops.getAllLaptop);
+router.get("/random", laptops.getRandomLaptop);
 
 router.post(
   "/",

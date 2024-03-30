@@ -13,8 +13,8 @@ import { LaptopRequestBody, LaptopGetAllQuery } from "@/src/types/laptop";
 
 export async function getRandomLaptop() {
   try {
-    const randomVideos = await Laptop.getRandom();
-    return randomVideos;
+    const randomLaptops = await Laptop.getRandom();
+    return randomLaptops;
   } catch (err) {
     throw err;
   }
@@ -53,9 +53,9 @@ export async function getAllLaptop(
     const orderBy: Prisma.LaptopOrderByWithRelationInput = {};
     const totalCount = await Laptop.count();
 
-    if (options?.name) {
+    if (options?.search) {
       laptopQuery.name = {
-        contains: options.name,
+        contains: options.search,
         mode: "insensitive",
       };
     }
@@ -78,6 +78,9 @@ export async function getAllLaptop(
 
     if (options?.sort_by === "ssd_storage" && options.order_by) {
       orderBy.ssdStorage = options.order_by;
+    }
+    if (options?.sort_by === "created_at" && options.order_by) {
+      orderBy.createdAt = options.order_by;
     }
 
     if (options?.page && options?.size) {

@@ -7,7 +7,7 @@ export async function getRandom() {
     const laptopCount = await prisma.laptop.count();
     const randomIndex = Math.floor(Math.random() * laptopCount);
     const randomLaptop = await prisma.laptop.findMany({
-      take: 1,
+      take: 5,
       skip: randomIndex,
       select: {
         id: true,

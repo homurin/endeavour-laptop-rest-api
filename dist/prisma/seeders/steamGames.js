@@ -19,7 +19,7 @@ function main() {
             const steamGamesBuffer = yield (0, promises_1.readFile)(__dirname + "/data/steam-games.json");
             const steamGames = JSON.parse(steamGamesBuffer.toString()).map((app) => {
                 delete app.minThreads;
-                return Object.assign(Object.assign({}, app), { id: app.id, adminId: admin_1.admin.id, minGpuMemory: app.minGpuMemory / 1000 });
+                return Object.assign(Object.assign({}, app), { id: app.id, adminId: admin_1.admin.id, price: Number(app.price * 15870.35), minGpuMemory: app.minGpuMemory / 1000 });
             });
             yield prisma.application.createMany({ data: steamGames });
             console.info("steam games seeding success");

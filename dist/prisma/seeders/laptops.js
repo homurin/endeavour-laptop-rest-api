@@ -18,10 +18,10 @@ function main() {
         try {
             const laptopsBuffer = yield (0, promises_1.readFile)(__dirname + "/data/laptops.json");
             const laptops = JSON.parse(laptopsBuffer.toString()).map((lap) => {
-                return Object.assign({ id: lap.id, adminId: admin_1.admin.id }, lap);
+                return Object.assign(Object.assign({}, lap), { id: lap.id, adminId: admin_1.admin.id, price: Number(lap.price * 15870.35) });
             });
             yield prisma.laptop.createMany({ data: laptops });
-            console.info("success seeding laptops");
+            console.info("laptops seeding success");
         }
         catch (err) {
             console.error(err);

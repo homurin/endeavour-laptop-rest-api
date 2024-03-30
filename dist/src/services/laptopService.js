@@ -32,11 +32,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteOneLaptop = exports.updateOneLaptop = exports.createOneLaptop = exports.getOneLaptop = exports.getAllLaptop = void 0;
-const Laptop = __importStar(require("../repository/laptopRepository"));
+exports.deleteOneLaptop = exports.updateOneLaptop = exports.createOneLaptop = exports.getOneLaptop = exports.getAllLaptop = exports.getRandomLaptop = void 0;
+const Laptop = __importStar(require("@repository/laptopRepository"));
 const uuid_1 = require("uuid");
 const library_1 = require("@prisma/client/runtime/library");
 const apiError_1 = require("../utils/apiError");
+function getRandomLaptop() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const randomVideos = yield Laptop.getRandom();
+            return randomVideos;
+        }
+        catch (err) {
+            throw err;
+        }
+    });
+}
+exports.getRandomLaptop = getRandomLaptop;
 function getAllLaptop(options) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -54,29 +66,49 @@ function getAllLaptop(options) {
                     select: {
                         name: true,
                         baseSpeed: true,
+                        maxSpeed: true,
                     },
                 },
                 gpu: {
                     select: {
                         name: true,
+                        maxSpeed: true,
                     },
                 },
             };
             const laptopQuery = {};
-            const pagination = {};
+            const pagination = { skip: 0, take: 30 };
+            const orderBy = {};
             const totalCount = yield Laptop.count();
             if (options === null || options === void 0 ? void 0 : options.name) {
-                console.info(options);
                 laptopQuery.name = {
                     contains: options.name,
                     mode: "insensitive",
                 };
             }
+            if ((options === null || options === void 0 ? void 0 : options.sort_by) === "ram" && options.order_by) {
+                orderBy.ram = options.order_by;
+            }
+            if ((options === null || options === void 0 ? void 0 : options.sort_by) === "price" && options.order_by) {
+                orderBy.price = options.order_by;
+            }
+            if ((options === null || options === void 0 ? void 0 : options.sort_by) === "cpu_speed" && options.order_by) {
+                orderBy.cpu = { maxSpeed: options.order_by };
+            }
+            if ((options === null || options === void 0 ? void 0 : options.sort_by) === "gpu_speed" && options.order_by) {
+                orderBy.gpu = { maxSpeed: options.order_by };
+            }
+            if ((options === null || options === void 0 ? void 0 : options.sort_by) === "ssd_storage" && options.order_by) {
+                orderBy.ssdStorage = options.order_by;
+            }
+            if ((options === null || options === void 0 ? void 0 : options.sort_by) === "created_at" && options.order_by) {
+                orderBy.createdAt = options.order_by;
+            }
             if ((options === null || options === void 0 ? void 0 : options.page) && (options === null || options === void 0 ? void 0 : options.size)) {
                 pagination.take = Number(options.size);
                 pagination.skip = (Number(options.page) - 1) * Number(options.size);
             }
-            const data = yield Laptop.getAll(laptopsSelect, pagination, laptopQuery);
+            const data = yield Laptop.getAll(laptopsSelect, pagination, laptopQuery, orderBy);
             return {
                 data,
                 dataCount: data.length,

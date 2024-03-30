@@ -9,6 +9,7 @@ import { uploadAppMediaValidation } from "../middlewares/imagekitValidation";
 const router = Router();
 
 router.get("/", apps.getAllApp);
+router.get("/random", apps.getRandomApps);
 router.get("/:id", appIdCheck, apps.getOneApp);
 router.post(
   "/",

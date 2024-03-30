@@ -3,6 +3,22 @@ import { SendError } from "@utils/apiError";
 import { AppGetAllQuery, AppRequestBody } from "@/src/types/application";
 import * as applicationService from "@services/applicationService";
 
+export async function getRandomApps(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const apps = await applicationService.getRandomApps();
+    res.status(200).json({
+      message: "success",
+      apps,
+    });
+  } catch (err) {
+    next(new SendError("internal server error", 500));
+  }
+}
+
 export async function getAllApp(
   req: Request,
   res: Response,

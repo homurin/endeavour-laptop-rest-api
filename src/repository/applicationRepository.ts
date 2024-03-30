@@ -7,6 +7,27 @@ export async function count(): Promise<number> {
   return count;
 }
 
+export async function getRandom() {
+  try {
+    const appCount = await prisma.application.count();
+    const randomIndex = Math.floor(Math.random() * appCount);
+    const randomApps = await prisma.application.findMany({
+      take: 5,
+      skip: randomIndex,
+      select: {
+        id: true,
+        name: true,
+        headerImage: true,
+        movies: true,
+        description: true,
+      },
+    });
+    return randomApps;
+  } catch (err) {
+    throw err;
+  }
+}
+
 export async function getAll(
   fields: Prisma.ApplicationSelect,
   pagination: { skip?: number; take?: number },
