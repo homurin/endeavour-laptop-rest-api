@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteOne = exports.updateOne = exports.createOne = exports.getOne = exports.getOneMediaAttributes = exports.getAll = exports.count = void 0;
+exports.deleteOne = exports.updateOne = exports.createOne = exports.getOne = exports.getOneMediaAttributes = exports.getAll = exports.getRandom = exports.count = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 function count() {
@@ -19,13 +19,43 @@ function count() {
     });
 }
 exports.count = count;
-function getAll(fields, pagination, option) {
+function getRandom() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const appCount = yield prisma.application.count();
+            const randomIndex = Math.floor(Math.random() * appCount);
+            const randomApps = yield prisma.application.findMany({
+                take: 10,
+                skip: randomIndex,
+                select: {
+                    id: true,
+                    name: true,
+                    headerImage: true,
+                    screenshots: true,
+                    movies: true,
+                    windows: true,
+                    linux: true,
+                    mac: true,
+                    price: true,
+                    description: true,
+                },
+            });
+            return randomApps;
+        }
+        catch (err) {
+            throw err;
+        }
+    });
+}
+exports.getRandom = getRandom;
+function getAll(fields, pagination, option, orderBy) {
     return __awaiter(this, void 0, void 0, function* () {
         const applications = yield prisma.application.findMany({
             select: fields,
             where: option,
             skip: pagination.skip,
             take: pagination.take,
+            orderBy,
         });
         return applications;
     });

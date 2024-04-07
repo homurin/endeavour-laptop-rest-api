@@ -18,7 +18,7 @@ function getRandom() {
             const laptopCount = yield prisma.laptop.count();
             const randomIndex = Math.floor(Math.random() * laptopCount);
             const randomLaptop = yield prisma.laptop.findMany({
-                take: 1,
+                take: 10,
                 skip: randomIndex,
                 select: {
                     id: true,
@@ -33,8 +33,18 @@ function getRandom() {
                     videos: true,
                     thumb: true,
                     ram: true,
+                    galleries: {
+                        select: {
+                            image: true,
+                        },
+                    },
                     ssdStorage: true,
                     hddStorage: true,
+                    windowsVersion: {
+                        select: {
+                            name: true,
+                        },
+                    },
                 },
             });
             return randomLaptop;
@@ -92,14 +102,13 @@ function getOne(laptopId) {
                     ssdStorage: true,
                     price: true,
                     isNew: true,
+                    osEdition: true,
                     refreshRate: true,
                     displayName: true,
                     panelType: true,
                     displayResolution: true,
                     displaySize: true,
                     panelCode: true,
-                    gamingScore: true,
-                    workstationScore: true,
                     suitableFor: true,
                     thumb: true,
                     videos: true,

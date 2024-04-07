@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -16,6 +16,18 @@ export async function getProfileById(id: string) {
       where: { id },
     });
     return admin;
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function updateProfile(id: string, data: Prisma.AdminUpdateInput) {
+  try {
+    const updatedData = await prisma.admin.update({
+      data,
+      where: { id },
+    });
+    return updatedData;
   } catch (err) {
     throw err;
   }

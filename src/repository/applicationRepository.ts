@@ -12,13 +12,18 @@ export async function getRandom() {
     const appCount = await prisma.application.count();
     const randomIndex = Math.floor(Math.random() * appCount);
     const randomApps = await prisma.application.findMany({
-      take: 5,
+      take: 10,
       skip: randomIndex,
       select: {
         id: true,
         name: true,
         headerImage: true,
+        screenshots: true,
         movies: true,
+        windows: true,
+        linux: true,
+        mac: true,
+        price: true,
         description: true,
       },
     });
@@ -31,13 +36,15 @@ export async function getRandom() {
 export async function getAll(
   fields: Prisma.ApplicationSelect,
   pagination: { skip?: number; take?: number },
-  option?: Prisma.ApplicationWhereInput
+  option?: Prisma.ApplicationWhereInput,
+  orderBy?: Prisma.ApplicationOrderByWithRelationInput
 ) {
   const applications = await prisma.application.findMany({
     select: fields,
     where: option,
     skip: pagination.skip,
     take: pagination.take,
+    orderBy,
   });
 
   return applications;

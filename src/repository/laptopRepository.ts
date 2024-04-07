@@ -7,7 +7,7 @@ export async function getRandom() {
     const laptopCount = await prisma.laptop.count();
     const randomIndex = Math.floor(Math.random() * laptopCount);
     const randomLaptop = await prisma.laptop.findMany({
-      take: 5,
+      take: 10,
       skip: randomIndex,
       select: {
         id: true,
@@ -22,8 +22,18 @@ export async function getRandom() {
         videos: true,
         thumb: true,
         ram: true,
+        galleries: {
+          select: {
+            image: true,
+          },
+        },
         ssdStorage: true,
         hddStorage: true,
+        windowsVersion: {
+          select: {
+            name: true,
+          },
+        },
       },
     });
     return randomLaptop;
@@ -77,14 +87,13 @@ export async function getOne(laptopId: string) {
         ssdStorage: true,
         price: true,
         isNew: true,
+        osEdition: true,
         refreshRate: true,
         displayName: true,
         panelType: true,
         displayResolution: true,
         displaySize: true,
         panelCode: true,
-        gamingScore: true,
-        workstationScore: true,
         suitableFor: true,
         thumb: true,
         videos: true,

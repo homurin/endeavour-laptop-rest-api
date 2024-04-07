@@ -5,6 +5,7 @@ import { getOneApp } from "@services/applicationService";
 import { getOneCpu } from "@services/cpuService";
 import { getOneGpu } from "../services/gpuService";
 import { getOneWindows } from "../services/windowsService";
+import { isAdminExists } from "../services/adminService";
 
 export async function laptopIdCheck(
   req: Request,
@@ -27,6 +28,7 @@ export async function laptopIdCheck(
     next(new SendError("failed id check process", 500));
   }
 }
+
 export async function appIdCheck(
   req: Request,
   res: Response,
@@ -41,6 +43,27 @@ export async function appIdCheck(
 
     if (!isExists) {
       next(new SendError("application not found", 404));
+    }
+
+    next();
+  } catch (err) {
+    next(new SendError("failed id check process", 500));
+  }
+}
+export async function adminIdCheck(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    if (!req?.params?.id) {
+      return next(new SendError("id is required", 400));
+    }
+
+    const isExists = await isAdminExists(req.params.id);
+
+    if (!isExists) {
+      next(new SendError("admin not found", 404));
     }
 
     next();

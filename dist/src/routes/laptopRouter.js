@@ -24,14 +24,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const laptops = __importStar(require("@controllers/laptopController"));
-const multer_1 = require("@middlewares/multer");
+const laptops = __importStar(require("../controllers/laptopController"));
+const multer_1 = require("../middlewares/multer");
 const imagekitUpload_1 = require("../middlewares/imagekitUpload");
 const idCheck_1 = require("../middlewares/idCheck");
 const authMe_1 = require("../middlewares/authMe");
 const imagekitValidation_1 = require("../middlewares/imagekitValidation");
 const router = (0, express_1.Router)();
 router.get("/", laptops.getAllLaptop);
+router.get("/random", laptops.getRandomLaptop);
 router.post("/", authMe_1.authMe, multer_1.imagesVideos.fields([
     { name: "thumb" },
     { name: "videos" },

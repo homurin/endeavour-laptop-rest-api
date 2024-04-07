@@ -33,15 +33,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteOneLaptop = exports.updateOneLaptop = exports.createOneLaptop = exports.getOneLaptop = exports.getAllLaptop = exports.getRandomLaptop = void 0;
-const Laptop = __importStar(require("@repository/laptopRepository"));
+const Laptop = __importStar(require("../repository/laptopRepository"));
 const uuid_1 = require("uuid");
 const library_1 = require("@prisma/client/runtime/library");
 const apiError_1 = require("../utils/apiError");
 function getRandomLaptop() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const randomVideos = yield Laptop.getRandom();
-            return randomVideos;
+            const randomLaptops = yield Laptop.getRandom();
+            return randomLaptops;
         }
         catch (err) {
             throw err;
@@ -62,6 +62,7 @@ function getAllLaptop(options) {
                 ssdStorage: true,
                 price: true,
                 thumb: true,
+                osEdition: true,
                 cpu: {
                     select: {
                         name: true,
@@ -75,14 +76,19 @@ function getAllLaptop(options) {
                         maxSpeed: true,
                     },
                 },
+                windowsVersion: {
+                    select: {
+                        name: true,
+                    },
+                },
             };
             const laptopQuery = {};
             const pagination = { skip: 0, take: 30 };
             const orderBy = {};
             const totalCount = yield Laptop.count();
-            if (options === null || options === void 0 ? void 0 : options.name) {
+            if (options === null || options === void 0 ? void 0 : options.search) {
                 laptopQuery.name = {
-                    contains: options.name,
+                    contains: options.search,
                     mode: "insensitive",
                 };
             }
@@ -116,7 +122,6 @@ function getAllLaptop(options) {
             };
         }
         catch (err) {
-            console.info(err);
             throw err;
         }
     });
