@@ -26,7 +26,7 @@ export async function authMe(req: Request, res: Response, next: NextFunction) {
   } catch (err) {
     const error = err as Error;
     if (error instanceof JsonWebTokenError) {
-      next(new SendError(error.message, 400));
+      return next(new SendError(error.message, 400));
     }
     next(new SendError("error when checking authme", 500));
   }

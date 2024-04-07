@@ -34,6 +34,7 @@ export async function getAllLaptop(
       ssdStorage: true,
       price: true,
       thumb: true,
+      osEdition: true,
       cpu: {
         select: {
           name: true,
@@ -45,6 +46,11 @@ export async function getAllLaptop(
         select: {
           name: true,
           maxSpeed: true,
+        },
+      },
+      windowsVersion: {
+        select: {
+          name: true,
         },
       },
     };
@@ -101,7 +107,6 @@ export async function getAllLaptop(
       totalCount,
     };
   } catch (err) {
-    console.info(err);
     throw err;
   }
 }

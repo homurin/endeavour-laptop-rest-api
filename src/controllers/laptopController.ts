@@ -10,7 +10,7 @@ export async function getRandomLaptop(
 ) {
   try {
     const laptops = await laptopService.getRandomLaptop();
-    console.info(laptops);
+
     res.status(200).json({
       message: "success",
       laptops,
@@ -87,7 +87,6 @@ export async function createOneLaptop(
       laptop: createdLaptop,
     });
   } catch (err) {
-    console.info(err);
     next(new SendError("internal server error", 500));
   }
 }

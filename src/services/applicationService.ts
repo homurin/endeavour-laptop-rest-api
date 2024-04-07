@@ -35,19 +35,11 @@ export async function getAllApp(options: AppGetAllQuery): Promise<{
       id: true,
       name: true,
       headerImage: true,
-      price: true,
       linux: true,
-      mac: true,
       windows: true,
-      categories: {
-        select: {
-          category: {
-            select: {
-              name: true,
-            },
-          },
-        },
-      },
+      mac: true,
+      price: true,
+      releaseDate: true,
     };
 
     if (options.search) {
@@ -57,8 +49,24 @@ export async function getAllApp(options: AppGetAllQuery): Promise<{
       };
     }
 
+    if (options.sort_by === "release_date" && options.order_by) {
+      orderBy.releaseDate = options.order_by;
+    }
+
     if (options.sort_by === "created_at" && options.order_by) {
       orderBy.createdAt = options.order_by;
+    }
+
+    if (options.sort_by === "min_ram" && options.order_by) {
+      orderBy.minRam = options.order_by;
+    }
+
+    if (options.sort_by === "min_storage" && options.order_by) {
+      orderBy.minStorage = options.order_by;
+    }
+
+    if (options.sort_by === "price" && options.order_by) {
+      orderBy.price = options.order_by;
     }
 
     if (options.page && options.size) {
@@ -66,7 +74,12 @@ export async function getAllApp(options: AppGetAllQuery): Promise<{
       pagination.skip = (Number(options.page) - 1) * Number(options.size);
     }
 
-    const data = await Application.getAll(fields, pagination, appOption);
+    const data = await Application.getAll(
+      fields,
+      pagination,
+      appOption,
+      orderBy
+    );
 
     return {
       data,
