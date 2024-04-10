@@ -5,5 +5,5 @@ export type CpuGetAll = Prisma.PromiseReturnType<typeof Cpu.getAll>;
 export type CpuGetOne = Prisma.PromiseReturnType<typeof Cpu.getOne>;
 
 export interface CpuGetAllQuery {
-  name?: string;
+  search?: string;
 }

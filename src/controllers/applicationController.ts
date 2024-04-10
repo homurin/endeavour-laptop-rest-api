@@ -135,6 +135,7 @@ export async function deleteOneApp(
       message: `record has been successfull deleted`,
     });
   } catch (err) {
+    console.info(err);
     next(new SendError("internal server error", 500));
   }
 }

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { SendError } from "../utils/apiError";
 import { getOneLaptop } from "@services/laptopService";
-import { getOneApp } from "@services/applicationService";
+import { isExists as isLaptopExists } from "@services/applicationService";
 import { getOneCpu } from "@services/cpuService";
 import { getOneGpu } from "../services/gpuService";
 import { getOneWindows } from "../services/windowsService";
@@ -39,12 +39,11 @@ export async function appIdCheck(
       return next(new SendError("id is required", 400));
     }
 
-    const isExists = await getOneApp(req.params.id);
+    const isExists = await isLaptopExists(req.params.id);
 
     if (!isExists) {
-      next(new SendError("application not found", 404));
+      return next(new SendError("application not found", 404));
     }
-
     next();
   } catch (err) {
     next(new SendError("failed id check process", 500));
@@ -63,7 +62,7 @@ export async function adminIdCheck(
     const isExists = await isAdminExists(req.params.id);
 
     if (!isExists) {
-      next(new SendError("admin not found", 404));
+      return next(new SendError("admin not found", 404));
     }
 
     next();
@@ -83,7 +82,7 @@ export async function cpuIdCheck(
     }
     const isExists = await getOneCpu(req.params.id);
     if (!isExists) {
-      next(new SendError("cpu not found", 404));
+      return next(new SendError("cpu not found", 404));
     }
     next();
   } catch (err) {
@@ -101,7 +100,7 @@ export async function gpuIdCheck(
     }
     const isExists = await getOneGpu(req.params.id);
     if (!isExists) {
-      next(new SendError("gpu not found", 404));
+      return next(new SendError("gpu not found", 404));
     }
     next();
   } catch (err) {
@@ -120,7 +119,7 @@ export async function windowsIdCheck(
     }
     const isExists = await getOneWindows(req.params.id);
     if (!isExists) {
-      next(new SendError("windows version not found", 404));
+      return next(new SendError("windows version not found", 404));
     }
     next();
   } catch (err) {

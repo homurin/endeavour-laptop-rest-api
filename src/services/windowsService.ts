@@ -18,9 +18,9 @@ export async function getAllWindows(query?: WindowsGetAllQuery): Promise<{
     };
     const windowsQuery: Prisma.WindowsWhereInput = {};
 
-    if (query?.name) {
+    if (query?.search) {
       windowsQuery.name = {
-        contains: query.name,
+        contains: query.search,
         mode: "insensitive",
       };
     }

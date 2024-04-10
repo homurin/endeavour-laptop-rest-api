@@ -20,9 +20,9 @@ export async function getAllCpu(query?: CpuGetAllQuery): Promise<{
 
     const cpuQuery: Prisma.CpuWhereInput = {};
 
-    if (query?.name) {
+    if (query?.search) {
       cpuQuery.name = {
-        contains: query.name,
+        contains: query.search,
         mode: "insensitive",
       };
     }

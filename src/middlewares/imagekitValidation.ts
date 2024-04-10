@@ -62,14 +62,6 @@ export async function uploadLaptopMediaValidation(
       await imagekit.isValidImages(thumb);
     }
 
-    if (galleryRequest) {
-      if (galleryRequest.length > 10) {
-        throw new MulterError("LIMIT_FIELD_COUNT", "gallery");
-      }
-      const gallery = galleryRequest;
-      await imagekit.bulkIsValidImages(gallery);
-    }
-
     if (videosRequest) {
       if (videosRequest.length > 1) {
         throw new MulterError("LIMIT_FIELD_COUNT", "videos");
@@ -78,6 +70,13 @@ export async function uploadLaptopMediaValidation(
       await imagekit.isValidVideos(videos);
     }
 
+    if (galleryRequest) {
+      if (galleryRequest.length > 10) {
+        throw new MulterError("LIMIT_FIELD_COUNT", "gallery");
+      }
+      const gallery = galleryRequest;
+      await imagekit.bulkIsValidImages(gallery);
+    }
     next();
   } catch (err) {
     const error = err as Error;

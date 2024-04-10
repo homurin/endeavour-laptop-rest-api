@@ -19,9 +19,9 @@ export async function getAllGpu(query?: GpuGetAllQuery): Promise<{
 
     const gpuQuery: Prisma.GpuWhereInput = {};
 
-    if (query?.name) {
+    if (query?.search) {
       gpuQuery.name = {
-        contains: query.name,
+        contains: query.search,
         mode: "insensitive",
       };
     }

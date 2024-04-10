@@ -122,6 +122,9 @@ export async function updateOne(
 
 export async function deleteOne(appId: string) {
   try {
+    await prisma.tagsOnApplications.deleteMany({ where: { appId } });
+    await prisma.categoriesOnApplications.deleteMany({ where: { appId } });
+    await prisma.genresOnApplications.deleteMany({ where: { appId } });
     await prisma.application.delete({ where: { id: appId } });
   } catch (err) {
     throw err;
