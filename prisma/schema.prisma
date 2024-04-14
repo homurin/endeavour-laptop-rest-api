@@ -18,12 +18,6 @@ enum PanelType {
   AMOLED
 }
 
-enum LaptopSuit {
-  GAMING
-  DESIGN
-  PRODUCTIVITY
-}
-
 enum WindowsEdition {
   HOME
   S
@@ -145,7 +139,6 @@ model Laptop {
   panelCode         Int?            @db.SmallInt
   refreshRate       Int?            @db.SmallInt
   weight            Decimal?        @db.Decimal
-  suitableFor       LaptopSuit?     @default(PRODUCTIVITY)
   isNew             Boolean?        @default(true)
   gamingScore       Float?          @default(0.0)
   workstationScore  Float?          @default(0.0)
@@ -187,7 +180,6 @@ model Application {
   minRam           Float
   minStorage       Float
   minOs            Windows                    @relation(fields: [winId], references: [id])
-  bitOs            Int                        @db.SmallInt
   admin            Admin                      @relation(fields: [adminId], references: [id])
   genres           GenresOnApplications[]
   categories       CategoriesOnApplications[]

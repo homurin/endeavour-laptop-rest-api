@@ -72,7 +72,13 @@ export async function updateUploadLaptopMedia(
         await imagekit.deleteOneFiles(prevLaptop.thumbId as string);
       }
       const thumb = thumbReq[0];
-      await imagekit.uploadImage(thumb, "laptop/thumbnails");
+      const uploaded = await imagekit.uploadImage(thumb, "laptop/thumbnails");
+      laptop.thumbId = uploaded.fileId;
+      laptop.thumb = uploaded.url;
+    }
+
+    if (laptop.deleteGalleries) {
+      await imagekit.bulkDeleteFiles(laptop.deleteGalleries);
     }
 
     if (gallery) {
@@ -90,15 +96,13 @@ export async function updateUploadLaptopMedia(
     }
 
     if (videosReq) {
-      if (prevLaptop?.thumbId) {
-        await imagekit.deleteOneFiles(prevLaptop.thumbId);
+      if (prevLaptop?.videosId) {
+        await imagekit.deleteOneFiles(prevLaptop.videosId);
       }
       const videos = videosReq[0];
-      await imagekit.uploadImage(videos, "laptop/videos");
-    }
-
-    if (laptop.deleteGalleries) {
-      await imagekit.bulkDeleteFiles(laptop.deleteGalleries);
+      const uploaded = await imagekit.uploadImage(videos, "laptop/videos");
+      laptop.videosId = uploaded.fileId;
+      laptop.videos = uploaded.url;
     }
 
     next();

@@ -81,6 +81,10 @@ export async function getOne(laptopId: string) {
     const laptop = await prisma.laptop.findFirst({
       select: {
         id: true,
+        winId: true,
+        cpuId: true,
+        gpuId: true,
+        brandId: true,
         name: true,
         ram: true,
         hddStorage: true,
@@ -94,7 +98,6 @@ export async function getOne(laptopId: string) {
         displayResolution: true,
         displaySize: true,
         panelCode: true,
-        suitableFor: true,
         thumb: true,
         videos: true,
         weight: true,

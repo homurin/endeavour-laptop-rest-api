@@ -8,6 +8,10 @@ export default async function main() {
   try {
     const laptopsBuffer = await readFile(__dirname + "/data/laptops.json");
     const laptops = JSON.parse(laptopsBuffer.toString()).map((lap: any) => {
+      delete lap?.suitableFor;
+      delete lap?.isNew;
+      delete lap?.gamingScore;
+      delete lap?.workstationScore;
       return {
         ...lap,
         id: lap.id,

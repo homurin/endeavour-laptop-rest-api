@@ -87,6 +87,11 @@ export async function createOneLaptop(
       laptop: createdLaptop,
     });
   } catch (err) {
+    const e = err as Error;
+    if (e instanceof SendError) {
+      console.info(e.message);
+      return next(new SendError(e.message, e.statusCode));
+    }
     next(new SendError("internal server error", 500));
   }
 }
@@ -111,6 +116,7 @@ export async function updateOneLaptop(
       laptop: updatedLaptop,
     });
   } catch (err) {
+    console.log(err);
     const error = err as Error;
     if (error instanceof SendError) {
       next(new SendError(error.message, error.statusCode));

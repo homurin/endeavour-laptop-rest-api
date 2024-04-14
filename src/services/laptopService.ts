@@ -162,11 +162,7 @@ export async function createOneLaptop(
       displayName: data.displayName,
       displayResolution: data.displayResolution,
       displaySize: Number(data.displaySize),
-      gamingScore: Number(),
-      workstationScore: Number(),
       refreshRate: Number(data.refreshRate),
-      isNew: JSON.parse(String(data.isNew)) || true,
-      suitableFor: data.suitableFor as $Enums.LaptopSuit,
       osEdition: data.osEdition as $Enums.WindowsEdition,
       price: Number(data.price),
       panelCode: Number(data.panelCode),
@@ -183,6 +179,10 @@ export async function createOneLaptop(
     const createdLaptop = await Laptop.createOne(laptop);
     return createdLaptop;
   } catch (err) {
+    const e = err as Error;
+    if (e instanceof PrismaClientValidationError) {
+      throw new SendError("fill all required value", 400);
+    }
     throw err;
   }
 }
@@ -192,6 +192,7 @@ export async function updateOneLaptop(
   data: LaptopRequestBody
 ): Promise<UpdateOneLaptop> {
   try {
+    console.info(data);
     const laptop: Prisma.LaptopUpdateInput = {
       admin: {
         connect: {
@@ -229,11 +230,7 @@ export async function updateOneLaptop(
       displayName: data.displayName,
       displayResolution: data.displayResolution,
       displaySize: Number(data.displaySize),
-      gamingScore: Number(),
-      workstationScore: Number(),
       refreshRate: Number(data.refreshRate),
-      isNew: JSON.parse(String(data.isNew)) || true,
-      suitableFor: data.suitableFor as $Enums.LaptopSuit,
       osEdition: data.osEdition as $Enums.WindowsEdition,
       price: Number(data.price),
       panelCode: Number(data.panelCode),

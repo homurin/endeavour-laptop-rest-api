@@ -77,7 +77,7 @@ export async function createOneApp(
 ): Promise<void> {
   try {
     const app = req.body as AppRequestBody;
-
+    console.info(app);
     if (req.user) {
       app.adminId = req.user.id;
     }

@@ -1,6 +1,9 @@
 import { v4 as uuid } from "uuid";
 import { Prisma } from "@prisma/client";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import {
+  PrismaClientKnownRequestError,
+  PrismaClientValidationError,
+} from "@prisma/client/runtime/library";
 import * as Application from "@repository/applicationRepository";
 import { SendError } from "@utils/apiError";
 import { AppGetAllQuery, AppRequestBody } from "@/src/types/application";
@@ -107,6 +110,7 @@ export async function getOneMediaAttributesApp(appId: string) {
 export async function getOneApp(id: string) {
   const fields: Prisma.ApplicationSelect = {
     id: true,
+    winId: true,
     name: true,
     price: true,
     minCpuSpeed: true,
@@ -187,6 +191,7 @@ export async function createOneApp(
   try {
     const appId = uuid();
 
+    console.info(app);
     const data: Prisma.ApplicationCreateInput = {
       id: appId,
       admin: {
@@ -196,7 +201,7 @@ export async function createOneApp(
       },
       minOs: {
         connect: {
-          id: app.windId,
+          id: app.winId,
         },
       },
       headerImageId: app.headerImageId,
@@ -212,7 +217,6 @@ export async function createOneApp(
       minOpenGl: Number(app.minOpenGl),
       minRam: Number(app.minRam),
       minStorage: Number(app.minStorage),
-      bitOs: Number(app.bitOs),
       price: Number(app?.price) || 0,
       headerImage: app.headerImage,
       movies: app.movies,
@@ -222,9 +226,9 @@ export async function createOneApp(
       developers: app.developers,
       publishers: app.publishers,
       releaseDate: app.releaseDate,
-      windows: JSON.parse(String(app.windows)),
-      linux: JSON.parse(String(app.linux)),
-      mac: JSON.parse(String(app.mac)),
+      windows: JSON.parse(String(app?.windows || false)),
+      linux: JSON.parse(String(app?.linux || false)),
+      mac: JSON.parse(String(app?.mac || false)),
     };
 
     const createdApp: CreatedOneApp = await Application.createOne(data);
@@ -234,7 +238,11 @@ export async function createOneApp(
     }
     return createdApp;
   } catch (err) {
+    console.info(err);
     const error = err as Error;
+    if (error instanceof PrismaClientValidationError) {
+      throw new SendError("invalid field or value", 400);
+    }
     throw new SendError(error.message, 500);
   }
 }
@@ -251,7 +259,7 @@ export async function updateOneApp(
       },
       minOs: {
         connect: {
-          id: app.windId,
+          id: app.winId,
         },
       },
       headerImageId: app.headerImageId,
@@ -267,7 +275,6 @@ export async function updateOneApp(
       minOpenGl: Number(app.minOpenGl),
       minRam: Number(app.minRam),
       minStorage: Number(app.minStorage),
-      bitOs: Number(app.bitOs),
       price: Number(app?.price) || 0,
       headerImage: app.headerImage,
       movies: app.movies,
@@ -277,9 +284,9 @@ export async function updateOneApp(
       developers: app.developers,
       publishers: app.publishers,
       releaseDate: app.releaseDate,
-      windows: JSON.parse(String(app.windows)),
-      linux: JSON.parse(String(app.linux)),
-      mac: JSON.parse(String(app.mac)),
+      windows: JSON.parse(String(app.windows || false)),
+      linux: JSON.parse(String(app.linux || false)),
+      mac: JSON.parse(String(app.mac || false)),
     };
 
     const updatedApp: UpdatedOneApp = await Application.updateOne(appId, data);

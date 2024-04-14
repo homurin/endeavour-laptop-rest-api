@@ -21,10 +21,7 @@ export interface LaptopRequestBody {
   panelCode?: number;
   refreshRate?: number;
   weight?: number;
-  suitableFor?: string;
   isNew?: boolean;
-  gamingScore?: number;
-  workstationScore: number;
   odEdition?: string;
   thumb?: string;
   videos?: string;

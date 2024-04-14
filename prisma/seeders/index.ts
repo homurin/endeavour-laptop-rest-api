@@ -28,12 +28,12 @@ async function main() {
     await laptopGallery();
     await topApps();
     await steamGames();
-    await categories();
-    await genres();
-    await tags();
-    await appsCategory();
-    await appsGenre();
-    await appsTag();
+    // await categories();
+    // await genres();
+    // await tags();
+    // await appsCategory();
+    // await appsGenre();
+    // await appsTag();
   } catch (err) {
     console.info(err);
   } finally {

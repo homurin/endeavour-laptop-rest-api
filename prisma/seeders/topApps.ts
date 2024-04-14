@@ -9,6 +9,7 @@ export default async function main() {
   try {
     const topAppsBuffer = await readFile(__dirname + "/data/top-apps.json");
     const topApps = JSON.parse(topAppsBuffer.toString()).map((app: any) => {
+      delete app.bitOs;
       return {
         ...app,
         id: uuid(),

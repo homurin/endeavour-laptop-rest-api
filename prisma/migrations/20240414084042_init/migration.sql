@@ -2,9 +2,6 @@
 CREATE TYPE "PanelType" AS ENUM ('CRT', 'LCD', 'LED', 'TN', 'IPS', 'VA', 'OLED', 'AMOLED');
 
 -- CreateEnum
-CREATE TYPE "LaptopSuit" AS ENUM ('GAMING', 'DESIGN', 'PRODUCTIVITY');
-
--- CreateEnum
 CREATE TYPE "WindowsEdition" AS ENUM ('HOME', 'S', 'PRO');
 
 -- CreateTable
@@ -117,7 +114,6 @@ CREATE TABLE "Laptop" (
     "panelCode" SMALLINT,
     "refreshRate" SMALLINT,
     "weight" DECIMAL,
-    "suitableFor" "LaptopSuit" DEFAULT 'PRODUCTIVITY',
     "isNew" BOOLEAN DEFAULT true,
     "gamingScore" DOUBLE PRECISION DEFAULT 0.0,
     "workstationScore" DOUBLE PRECISION DEFAULT 0.0,
@@ -160,7 +156,6 @@ CREATE TABLE "Application" (
     "minGpuBoostClock" DOUBLE PRECISION NOT NULL,
     "minRam" DOUBLE PRECISION NOT NULL,
     "minStorage" DOUBLE PRECISION NOT NULL,
-    "bitOs" SMALLINT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 

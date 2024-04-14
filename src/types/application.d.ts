@@ -3,7 +3,7 @@ import * as Application from "@repository/applicationRepository";
 
 export interface AppRequestBody {
   adminId: string;
-  windId: string;
+  winId: string;
   name: string;
   headerImageId?: string;
   screenshotsId?: string;
@@ -29,7 +29,6 @@ export interface AppRequestBody {
   minGpuBoostClock: number;
   minRam: number;
   minStorage: number;
-  bitOs: number;
 }
 
 export interface AppGetAllQuery {
