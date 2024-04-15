@@ -192,7 +192,6 @@ export async function updateOneLaptop(
   data: LaptopRequestBody
 ): Promise<UpdateOneLaptop> {
   try {
-    console.info(data);
     const laptop: Prisma.LaptopUpdateInput = {
       admin: {
         connect: {
@@ -244,11 +243,11 @@ export async function updateOneLaptop(
         },
       };
     }
-    if (data.deleteGalleries) {
+    if (data.removeGalleryIds) {
       laptop.galleries = {
         deleteMany: {
           id: {
-            in: data.deleteGalleries,
+            in: data.removeGalleryIds,
           },
         },
       };

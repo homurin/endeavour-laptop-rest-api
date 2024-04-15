@@ -26,6 +26,7 @@ export async function updateProfile(id: string, data: Prisma.AdminUpdateInput) {
     const updatedData = await prisma.admin.update({
       data,
       where: { id },
+      select: { id: true, username: true, fullName: true, email: true },
     });
     return updatedData;
   } catch (err) {

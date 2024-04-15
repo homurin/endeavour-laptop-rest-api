@@ -27,7 +27,9 @@ export interface LaptopRequestBody {
   videos?: string;
   osEdition?: string;
   galleries?: GalleriesRequestBody[];
-  deleteGalleries?: string[];
+  removeThumbId?: string;
+  removeVideosId?: string;
+  removeGalleryIds?: string[];
 }
 
 type GalleriesRequestBody = {

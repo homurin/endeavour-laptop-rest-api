@@ -77,7 +77,7 @@ export async function createOneApp(
 ): Promise<void> {
   try {
     const app = req.body as AppRequestBody;
-    console.info(app);
+
     if (req.user) {
       app.adminId = req.user.id;
     }
@@ -135,7 +135,6 @@ export async function deleteOneApp(
       message: `record has been successfull deleted`,
     });
   } catch (err) {
-    console.info(err);
     next(new SendError("internal server error", 500));
   }
 }

@@ -2,7 +2,10 @@ import { Router } from "express";
 import * as apps from "@controllers/applicationController";
 import { authMe } from "../middlewares/authMe";
 import { imagesVideos } from "../middlewares/multer";
-import { uploadAppMedia } from "../middlewares/imagekitUpload";
+import {
+  updateUploadAppMedia,
+  uploadAppMedia,
+} from "../middlewares/imagekitUpload";
 import { appIdCheck } from "../middlewares/idCheck";
 import { uploadAppMediaValidation } from "../middlewares/imagekitValidation";
 
@@ -33,7 +36,7 @@ router.patch(
     { name: "movies" },
   ]),
   uploadAppMediaValidation,
-  uploadAppMedia,
+  updateUploadAppMedia,
   apps.updateOneApp
 );
 

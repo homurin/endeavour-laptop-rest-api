@@ -17,6 +17,9 @@ export interface AppRequestBody {
   headerImage?: string;
   screenshots?: string;
   movies?: string;
+  removeHeaderImageId?: string;
+  removeScreenshotsId?: string;
+  removeMoviesId?: string;
   windows: boolean;
   mac: boolean;
   linux: boolean;

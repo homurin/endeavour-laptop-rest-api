@@ -67,6 +67,27 @@ export async function updateUploadLaptopMedia(
     const gallery = files?.["gallery"];
     const laptop = req.body as LaptopRequestBody;
 
+    if (laptop.removeThumbId) {
+      if (prevLaptop?.thumbId === laptop.removeThumbId) {
+        prevLaptop.thumbId;
+        await imagekit.deleteOneFiles(prevLaptop.thumbId);
+      }
+      laptop.thumb = "";
+      laptop.thumbId = "";
+    }
+
+    if (laptop.removeVideosId) {
+      if (prevLaptop?.videosId === laptop.removeVideosId) {
+        await imagekit.deleteOneFiles(prevLaptop.videosId);
+      }
+      laptop.videos = "";
+      laptop.videosId = "";
+    }
+
+    if (laptop.removeGalleryIds) {
+      await imagekit.bulkDeleteFiles(laptop.removeGalleryIds);
+    }
+
     if (thumbReq) {
       if (prevLaptop?.thumbId) {
         await imagekit.deleteOneFiles(prevLaptop.thumbId as string);
@@ -75,10 +96,6 @@ export async function updateUploadLaptopMedia(
       const uploaded = await imagekit.uploadImage(thumb, "laptop/thumbnails");
       laptop.thumbId = uploaded.fileId;
       laptop.thumb = uploaded.url;
-    }
-
-    if (laptop.deleteGalleries) {
-      await imagekit.bulkDeleteFiles(laptop.deleteGalleries);
     }
 
     if (gallery) {
@@ -148,7 +165,6 @@ export async function uploadAppMedia(
       laptop.moviesId = uploaded.fileId;
       laptop.movies = uploaded.url;
     }
-
     next();
   } catch (err) {
     const error = err as Error;
@@ -168,13 +184,33 @@ export async function updateUploadAppMedia(
     const prevApp = await applicationService.getOneMediaAttributesApp(
       req.params.id
     );
-
     const app = req.body as AppRequestBody;
     const files = req.files as MulterFiles;
-
     const headerImage = files?.["headerImage"];
     const screenshots = files?.["screenshots"];
     const movies = files?.["movies"];
+
+    if (app.removeHeaderImageId) {
+      if (app.removeHeaderImageId === prevApp.headerImageId) {
+        await imagekit.deleteOneFiles(prevApp.headerImageId);
+      }
+      app.headerImage = "";
+      app.headerImageId = "";
+    }
+    if (app.removeScreenshotsId) {
+      if (app.removeScreenshotsId === prevApp.screenshotsId) {
+        await imagekit.deleteOneFiles(prevApp.screenshotsId);
+      }
+      app.screenshots = "";
+      app.screenshotsId = "";
+    }
+    if (app.removeMoviesId) {
+      if (app.removeMoviesId === prevApp.moviesId) {
+        await imagekit.deleteOneFiles(prevApp.moviesId);
+      }
+      app.movies = "";
+      app.moviesId = "";
+    }
 
     if (headerImage) {
       if (prevApp.headerImageId) {
@@ -187,6 +223,7 @@ export async function updateUploadAppMedia(
       app.headerImageId = uploaded.fileId;
       app.headerImage = uploaded.url;
     }
+
     if (screenshots) {
       if (prevApp.screenshotsId) {
         await imagekit.deleteOneFiles(prevApp.screenshotsId);
@@ -198,6 +235,7 @@ export async function updateUploadAppMedia(
       app.screenshotsId = uploaded.fileId;
       app.screenshots = uploaded.url;
     }
+
     if (movies) {
       if (prevApp.moviesId) {
         await imagekit.deleteOneFiles(prevApp.moviesId);
@@ -206,6 +244,7 @@ export async function updateUploadAppMedia(
       app.moviesId = uploaded.fileId;
       app.movies = uploaded.url;
     }
+
     next();
   } catch (err) {
     const error = err as Error;

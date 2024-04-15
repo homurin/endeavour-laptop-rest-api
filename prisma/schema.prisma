@@ -26,7 +26,7 @@ enum WindowsEdition {
 
 model Admin {
   id          String        @id @unique @db.VarChar(36)
-  username    String        @db.VarChar(50)
+  username    String        @db.VarChar(30)
   fullName    String        @db.VarChar(60)
   email       String        @unique
   password    String        @db.VarChar(72)
@@ -36,9 +36,6 @@ model Admin {
   gpus        Gpu[]
   windows     Windows[]
   application Application[]
-  tags        Tag[]
-  genres      Genre[]
-  categories  Category[]
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 }
@@ -181,60 +178,7 @@ model Application {
   minStorage       Float
   minOs            Windows                    @relation(fields: [winId], references: [id])
   admin            Admin                      @relation(fields: [adminId], references: [id])
-  genres           GenresOnApplications[]
-  categories       CategoriesOnApplications[]
-  tags             TagsOnApplications[]
   createdAt        DateTime                   @default(now())
   updatedAt        DateTime                   @updatedAt
 }
 
-model Genre {
-  id           String                 @id @unique @db.VarChar(36)
-  adminId      String                 @db.VarChar(36)
-  admin        Admin                  @relation(fields: [adminId], references: [id])
-  name         String                 @db.VarChar(33)
-  applications GenresOnApplications[]
-}
-
-model GenresOnApplications {
-  appId       String      @db.VarChar(36)
-  genreId     String      @db.VarChar(36)
-  application Application @relation(fields: [appId], references: [id])
-  genre       Genre       @relation(fields: [genreId], references: [id])
-
-  @@id([appId, genreId])
-}
-
-model Category {
-  id           String                     @id @unique @db.VarChar(36)
-  adminId      String                     @db.VarChar(36)
-  name         String                     @unique @db.VarChar(33)
-  admin        Admin                      @relation(fields: [adminId], references: [id])
-  applications CategoriesOnApplications[]
-}
-
-model CategoriesOnApplications {
-  appId        String      @db.VarChar(36)
-  categoryId   String      @db.VarChar(36)
-  applications Application @relation(fields: [appId], references: [id])
-  category     Category    @relation(fields: [categoryId], references: [id])
-
-  @@id([appId, categoryId])
-}
-
-model Tag {
-  id           String               @id @unique @db.VarChar(36)
-  adminId      String               @db.VarChar(36)
-  admin        Admin                @relation(fields: [adminId], references: [id])
-  name         String               @db.VarChar(50)
-  applications TagsOnApplications[]
-}
-
-model TagsOnApplications {
-  appId        String      @db.VarChar(36)
-  tagId        String      @db.VarChar(36)
-  applications Application @relation(fields: [appId], references: [id])
-  tag          Tag         @relation(fields: [tagId], references: [id])
-
-  @@id([appId, tagId])
-}

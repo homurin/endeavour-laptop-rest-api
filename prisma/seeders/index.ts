@@ -7,12 +7,6 @@ import windows from "./windows";
 import laptops from "./laptops";
 import laptopGallery from "./laptopsGallery";
 import steamGames from "./steamGames";
-import categories from "./categories";
-import genres from "./genres";
-import tags from "./tags";
-import appsCategory from "./appsCategory";
-import appsGenre from "./appsGenre";
-import appsTag from "./appsTag";
 import topApps from "./topApps";
 
 const prisma = new PrismaClient();
@@ -28,12 +22,6 @@ async function main() {
     await laptopGallery();
     await topApps();
     await steamGames();
-    // await categories();
-    // await genres();
-    // await tags();
-    // await appsCategory();
-    // await appsGenre();
-    // await appsTag();
   } catch (err) {
     console.info(err);
   } finally {

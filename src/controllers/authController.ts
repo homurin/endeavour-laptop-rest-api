@@ -53,19 +53,17 @@ export async function updateProfile(
   next: NextFunction
 ) {
   try {
-    const id: string = req.params.id;
+    if (!req.user) {
+      throw new SendError("user not found", 404);
+    }
+    const id: string = req.user?.id;
     const body = req.body as Admin;
-
-    const updatedAdmin = await adminService.update(id, body);
-
-    const username = updatedAdmin.username;
-    const password = updatedAdmin.password;
-
-    const { token } = await adminService.generateToken(username, password);
+    console.log(body);
+    const { data, token } = await adminService.update(id, body);
 
     res.status(200).json({
       message: "success",
-      admin: updatedAdmin,
+      admin: data,
       token,
     });
   } catch (err) {

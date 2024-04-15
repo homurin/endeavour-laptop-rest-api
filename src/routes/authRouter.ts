@@ -4,7 +4,6 @@ import {
   checkRequiredLoginFields,
   checkRequiredUpdateField,
 } from "../middlewares/authValidation";
-import { adminIdCheck } from "../middlewares/idCheck";
 import { authMe } from "../middlewares/authMe";
 
 const router = Router();
@@ -12,8 +11,8 @@ const router = Router();
 router.get("/me", authMe, authController.checkToken);
 router.post("/login", checkRequiredLoginFields, authController.login);
 router.patch(
-  "/",
-  adminIdCheck,
+  "/update",
+  authMe,
   checkRequiredUpdateField,
   authController.updateProfile
 );

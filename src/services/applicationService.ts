@@ -111,6 +111,9 @@ export async function getOneApp(id: string) {
   const fields: Prisma.ApplicationSelect = {
     id: true,
     winId: true,
+    headerImageId: true,
+    screenshotsId: true,
+    moviesId: true,
     name: true,
     price: true,
     minCpuSpeed: true,
@@ -139,36 +142,6 @@ export async function getOneApp(id: string) {
         name: true,
       },
     },
-    categories: {
-      select: {
-        category: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-      },
-    },
-    genres: {
-      select: {
-        genre: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-      },
-    },
-    tags: {
-      select: {
-        tag: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-      },
-    },
   };
   const data = await Application.getOne(id, fields);
   if (!data) {
@@ -191,7 +164,6 @@ export async function createOneApp(
   try {
     const appId = uuid();
 
-    console.info(app);
     const data: Prisma.ApplicationCreateInput = {
       id: appId,
       admin: {
@@ -238,7 +210,6 @@ export async function createOneApp(
     }
     return createdApp;
   } catch (err) {
-    console.info(err);
     const error = err as Error;
     if (error instanceof PrismaClientValidationError) {
       throw new SendError("invalid field or value", 400);
