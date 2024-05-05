@@ -136,9 +136,6 @@ model Laptop {
   panelCode         Int?            @db.SmallInt
   refreshRate       Int?            @db.SmallInt
   weight            Decimal?        @db.Decimal
-  isNew             Boolean?        @default(true)
-  gamingScore       Float?          @default(0.0)
-  workstationScore  Float?          @default(0.0)
   osEdition         WindowsEdition? @default(HOME)
   thumb             String?         @db.VarChar(255)
   videos            String?         @db.VarChar(255)

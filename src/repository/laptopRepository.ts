@@ -90,7 +90,6 @@ export async function getOne(laptopId: string) {
         hddStorage: true,
         ssdStorage: true,
         price: true,
-        isNew: true,
         osEdition: true,
         refreshRate: true,
         displayName: true,
